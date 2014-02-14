@@ -1,11 +1,12 @@
 import setuptools
+import urllib
 
 class SeedCommand(setuptools.Command):
     """
     Seed data command
     """
 
-    description = "Seed Data"
+    description = "Prepare/Download Input Data"
     user_options = []
 
     def initialize_options(self):
@@ -15,11 +16,10 @@ class SeedCommand(setuptools.Command):
         pass
 
     def run(self):
-        # Download or generate input data that is not part of this
-        # repository
+        # Download or generate any data that is not part of this repository
+        # urllib.urlretrieve("http://work.audiolabs.uni-erlangen.de/project/input.wav", "data/input.wav")
+        # urllib.urlretrieve("http://work.audiolabs.uni-erlangen.de/project/input2.wav", "data/input2.wav")
         pass
-
-
 
 
 setuptools.setup(
