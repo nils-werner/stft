@@ -1,6 +1,28 @@
-from setuptools import setup
+import setuptools
 
-setup(
+class SeedCommand(setuptools.Command):
+    """
+    Seed data command
+    """
+
+    description = "Seed Data"
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        # Download or generate input data that is not part of this
+        # repository
+        pass
+
+
+
+
+setuptools.setup(
     # Name of the project
     name='skeleton',
 
@@ -19,7 +41,7 @@ setup(
 
     # Packages in this project
     # find_packages() finds all these automatically for you
-    packages=find_packages(),
+    packages=setuptools.find_packages(),
 
     # Dependencies, this installs the entire Python scientific
     # computations stack
@@ -34,4 +56,9 @@ setup(
     # Link to dependencies that are not on PyPI, in this case
     # dspy
     dependency_links=["git+https://github.com/nils-werner/dspy.git#egg=dspy"],
+
+    # Register custom commands
+    cmdclass = {
+        'seed': SeedCommand
+    },
     zip_safe=False)
