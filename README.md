@@ -49,6 +49,14 @@ Your program should be structured as follows:
  - `tests/`: Unit tests
  - `setup.py`: Installation script
 
+Dependencies
+------------
+
+Python dependencies should be managed in the `setup.py` file. They will
+automatically be installed when running `python setup.py install`.
+
+Other language dependencies should go in `src/extern/`.
+
 References
 ----------
 
