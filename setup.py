@@ -46,10 +46,9 @@ setuptools.setup(
     # Dependencies, this installs the entire Python scientific
     # computations stack
     install_requires=['nose>=1.3.0',
-                      'numpy>=1.9',
-                      'scipy>=0.14.0',
-                      'ipython>=2.0',
-                      'matplotlib>=1.4',
+                      'numpy>=1.8',
+                      'scipy>=0.13.0',
+                      'matplotlib>=1.3.1',
                       'PyAudio>=0.2.7',
                       'dspy'],
 
