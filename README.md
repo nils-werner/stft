@@ -41,9 +41,25 @@ Structure
 
 Your program should be structured as follows:
 
- - `src/project/`: Source code, change `project` to reflect your project name
-  - `src/project/extern/`: All external code, e.g. MATLAB and C  
+ - `project/`: Source code, change `project` to reflect your project name
+  - `project/extern/`: All external code, e.g. MATLAB and C  
     Example scripts for interacting with matlab and converting .mat to .npy  
     files back and forth are provided there.  
  - `doc/`: Project documentation
- - `setup.py`: Installation instructions
+ - `tests/`: Unit tests
+ - `setup.py`: Installation script
+
+Dependencies
+------------
+
+Python dependencies should be managed in the `setup.py` file. They will
+automatically be installed when running `python setup.py install`.
+
+Other language dependencies should go in `src/extern/`.
+
+References
+----------
+
+ - [Sample Project][1] by the Python Package Authority
+
+ [1]: https://github.com/pypa/sampleproject
