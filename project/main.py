@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+# Import Python 3 behaviour into Python 2
+from __future__ import print_function           # print("hello") instead of print "hello"
+from __future__ import unicode_literals         # all strings are unicode by default
+from __future__ import absolute_import          # from . import foo
+from __future__ import division                 # 1 / 2 == 0.5 and 1 // 2 == 0
+
 import sys, os
 import argparse
 import scipy, numpy
