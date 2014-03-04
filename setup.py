@@ -52,7 +52,7 @@ setuptools.setup(
                       'PyAudio>=0.2.7',
                       'dspy'],
 
-    test_requires=['nose>=1.3.0'],
+    tests_require=['nose>=1.3.0'],
     test_suite="nose.collector",
 
     # Link to dependencies that are not on PyPI, in this case
