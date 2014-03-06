@@ -1,25 +1,19 @@
-import setuptools
 import urllib
+import setuptools
+import setuptools.command.develop
 
-class SeedCommand(setuptools.Command):
+class DevelopCommandProxy(setuptools.command.develop.develop):
     """
-    Seed data command
+    `develop` command
     """
-
-    description = "Prepare/Download Input Data"
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
 
     def run(self):
-        # Download or generate any data that is not part of this repository
+        # Download or generate any data that is not part of this repository but is required
+        # for development:
+
         # urllib.urlretrieve("http://work.audiolabs.uni-erlangen.de/project/input.wav", "data/input.wav")
         # urllib.urlretrieve("http://work.audiolabs.uni-erlangen.de/project/input2.wav", "data/input2.wav")
-        pass
+        setuptools.command.develop.develop.run(self)
 
 
 setuptools.setup(
@@ -71,6 +65,6 @@ setuptools.setup(
 
     # Register custom commands
     cmdclass = {
-        'seed': SeedCommand
+        'develop': DevelopCommandProxy
     },
     zip_safe=False)

@@ -92,6 +92,25 @@ install all dependencies so you can start developing:
 
 
 
+#### Custom data for development
+
+Sometimes the data required for developing the library can't be included in the 
+repository itself for various reasons. To still fetch the data for development,
+the `python setup.py develop` command has been extended using the class
+`DevelopCommandProxy` in `setup.py`.
+
+In the `run()` method of that class there are two exemplary calls to
+`urllib.urlretrieve()` that each retrieve a remote file and save it inside the
+project file structure.
+
+Use these examples to automatically download test- and development data.
+
+These files will not be downloaded if a user is merely installing the library
+by using `python setup.py install` or `pip` or as a dependency for another
+project.
+
+
+
 
 Structure
 ---------
