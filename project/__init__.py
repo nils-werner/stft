@@ -1,11 +1,14 @@
+#!/usr/bin/env python
+
 import sys
-from main import main
+import application
+
 
 def main(argv=[]):
     """Entry point for the application script"""
     print("Call your main application code here")
 
-    return main(argv)
+    return application.main(argv)
 
 
 if __name__ == "__main__":
