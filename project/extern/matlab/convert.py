@@ -1,14 +1,24 @@
 #!/usr/bin/env python2
 
-import os, sys
+import os
+import sys
 import argparse
 import numpy
 import scipy.io
 
+
 def main(argv):
-    parser = argparse.ArgumentParser(description='Convert NumPy to Matlab data files and vice versa.')
-    parser.add_argument('infile', help='Input file, either Numpy .npy or MATLAB .mat format.')
-    parser.add_argument('outfile', help='Output file to be created, either Numpy .npy or MATLAB .mat format.')
+    parser = argparse.ArgumentParser(
+        description='Convert NumPy to Matlab data files and vice versa.'
+    )
+    parser.add_argument(
+        'infile',
+        help='Input file, either Numpy .npy or MATLAB .mat format.'
+    )
+    parser.add_argument(
+        'outfile',
+        help='Output file to be created, either Numpy .npy or MATLAB .mat format.'
+    )
     args = parser.parse_args(argv)
 
     # Convert Numpy to MATLAB
