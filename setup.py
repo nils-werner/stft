@@ -46,14 +46,18 @@ setuptools.setup(
 
     # Dependencies, this installs the entire Python scientific
     # computations stack
-    install_requires=['nose>=1.3.0',
-                      'numpy>=1.8',
-                      'scipy>=0.13.0',
-                      'matplotlib>=1.3.1',
-                      'PyAudio>=0.2.7',
-                      'dspy'],
+    install_requires=[
+        'nose>=1.3.0',
+        'numpy>=1.8',
+        'scipy>=0.13.0',
+        'matplotlib>=1.3.1',
+        'PyAudio>=0.2.7',
+        'dspy'
+    ],
 
-    tests_require=['nose>=1.3.0'],
+    tests_require=[
+        'nose>=1.3.0'
+    ],
     test_suite="nose.collector",
 
     classifiers=[
@@ -70,7 +74,9 @@ setuptools.setup(
 
     # Link to dependencies that are not on PyPI, in this case
     # dspy
-    dependency_links=["git+https://github.com/nils-werner/dspy.git#egg=dspy"],
+    dependency_links=[
+        'git+https://github.com/nils-werner/dspy.git#egg=dspy'
+    ],
 
     # Register custom commands
     cmdclass={
