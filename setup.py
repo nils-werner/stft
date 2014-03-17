@@ -52,6 +52,7 @@ setuptools.setup(
         'scipy>=0.13.0',
         'matplotlib>=1.3.1',
         'PyAudio>=0.2.7',
+        'ipdb',
         'dspy'
     ],
 
