@@ -139,6 +139,23 @@ Other language dependencies should go in `src/extern/`.
 
 
 
+NumPy to C
+----------
+
+This skeleton contains a module that combines the comfort of NumPy with the computational
+power of native C compiled code.
+
+All code that shall be compiled to C must go in a `.pyx` file, all plain python code goes
+in a `.py` file.
+
+Also, all `.pyx` files must be registered in the `extensions` in `setup.py`, around line 17.
+Registering these files enables the library to be installed using pip or `python setup.py install`.
+
+**Before committing, make sure that you have compiled `.pyx` files to `.c` files once.** This
+enables users to compile your extension without having to use cython but merely their C compiler.
+
+
+
 References
 ----------
 
