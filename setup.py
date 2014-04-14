@@ -1,4 +1,7 @@
+import sys
+import numpy
 import urllib
+import warnings
 import setuptools
 import setuptools.command.develop
 
@@ -22,6 +25,29 @@ class DevelopCommandProxy(setuptools.command.develop.develop):
         # )
         setuptools.command.develop.develop.run(self)
 
+# See if we can use Cython
+USE_CYTHON = False
+
+if "--no-cython" not in sys.argv:
+    try:
+        from Cython.Distutils import build_ext
+        from Cython.Build import cythonize
+        USE_CYTHON = True
+    except ImportError as e:
+        warnings.warn(e.message)
+else:
+    sys.argv.remove("--no-cython")
+
+ext = '.pyx' if USE_CYTHON else '.c'
+
+extension = [
+    setuptools.Extension("project.cython",
+                         ["project/cython" + ext],
+                         include_dirs=[numpy.get_include()]),
+]
+
+if USE_CYTHON:
+    extension = cythonize(extension)
 
 setuptools.setup(
     # Name of the project
@@ -83,4 +109,6 @@ setuptools.setup(
     cmdclass={
         'develop': DevelopCommandProxy
     },
-    zip_safe=False)
+    zip_safe=False,
+    ext_modules=extension
+)
