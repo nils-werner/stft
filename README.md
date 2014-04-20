@@ -112,6 +112,21 @@ project.
 
 
 
+Documentation
+-------------
+
+This project is using sphinx as its documentation engine. All plaintext
+documentation should go as restructured text files `.rst` in `docs/source/`.
+
+All API descriptions should go as doctext next to the function declaration.
+
+The docs can be rendered by running
+
+    python setup.py build_sphinx
+
+The resulting doc pages will end up in `doc/build/`. Do not commit rendered
+documentation pages!
+
 Structure
 ---------
 
@@ -121,7 +136,7 @@ Your program should be structured as follows:
   - `project/extern/`: All external code, e.g. MATLAB and C  
     Example scripts for interacting with matlab and converting .mat to .npy  
     files back and forth are provided there.  
- - `doc/`: Project documentation
+ - `docs/source/`: Project documentation, Tutorials etc.
  - `tests/`: Unit tests
  - `setup.py`: Installation script
 

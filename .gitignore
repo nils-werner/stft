@@ -6,3 +6,6 @@ src/*.egg-info
 *.egg
 *.egg-info
 *.so
+*.egg-info/
+docs/build
+docs/source/api
