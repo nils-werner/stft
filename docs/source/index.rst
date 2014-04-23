@@ -1,5 +1,7 @@
-Welcome to this project's documentation!
-========================================
+Welcome to this stft's documentation!
+=====================================
+
+This is a package for calculating short time fourier transforms with NumPy.
 
 Contents:
 
@@ -7,7 +9,7 @@ Contents:
    :maxdepth: 2
 
    installation
-   api/project
+   api/stft
 
 
 Indices and tables
