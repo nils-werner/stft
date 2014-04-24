@@ -2,28 +2,31 @@
 Module to transform signals
 
 """
-from . import window
+from __future__ import division
 import scipy
 import numpy
 import math
 import scipy.interpolate
 
 
-def stft(data, windowed=True, halved=True, padding=0):
+def process(data, window=None, halved=True, transform=None, padding=0, **kwargs):
     """
-    Calculate the short time fourier transform of a signal
+    Calculate a windowed transform of a signal
 
     Parameters
     ----------
     data : numpy array
         The signal to be calculated.
-    windowed : boolean
-        Switch for turning on signal windowing. Defaults to True.
+    window : callable
+        Window to be used for deringing. Can be False to disable windowing.
+        Defaults to `scipy.signal.cosine`.
     halved : boolean
         Switch for turning on signal truncation. By default,
-        the fourier transform returns a symmetrically mirrored
+        the fourier transform of real signals returns a symmetrically mirrored
         spectrum. This additional data is not needed and can be
         removed. Defaults to True.
+    transform : callable
+        The transform to be used. Defaults to `scipy.fft.
     padding : int
         Zero-pad signal with x times the number of samples.
 
@@ -32,14 +35,25 @@ def stft(data, windowed=True, halved=True, padding=0):
     data : numpy array
         The spectrum
 
-    """
-    if(windowed):
-        data = window.window(data)
+    Notes
+    -----
 
-    if(padding):
+    Additional keyword arguments will be passed on to `transform`.
+
+    """
+    if transform is None:
+        transform = scipy.fft
+
+    if window is None:
+        window = cosine
+
+    if callable(window):
+        data = data * window(len(data))
+
+    if padding > 0:
         data = numpy.hstack((data, numpy.zeros(len(data) * padding)))
 
-    result = scipy.fft(data)
+    result = transform(data)
 
     if(halved):
         result = result[0:result.size / 2 + 1]
@@ -47,7 +61,7 @@ def stft(data, windowed=True, halved=True, padding=0):
     return result
 
 
-def istft(data, windowed=True, halved=True, padding=0):
+def iprocess(data, window=None, halved=True, transform=None, padding=0, **kwargs):
     """
     Calculate the inverse short time fourier transform of a spectrum
 
@@ -55,13 +69,17 @@ def istft(data, windowed=True, halved=True, padding=0):
     ----------
     data : numpy array
         The spectrum to be calculated.
-    windowed : boolean
-        Switch for turning on signal windowing. Defaults to True.
+    window : callable
+        Window to be used for deringing. Can be False to disable windowing.
+        Defaults to `scipy.signal.cosine`.
     halved : boolean
-        Switch for turning on signal truncation. By default,
+        Switch for turning on signal truncation. For real output signals,
         the inverse fourier transform consumes a symmetrically
         mirrored spectrum. This additional data is not needed
-        and can be removed. Defaults to True.
+        and can be removed. Setting this value to True will
+        automatically create a mirrored spectrum. Defaults to True.
+    transform : callable
+        The transform to be used. Defaults to `scipy.ifft`.
     padding : int
         Signal before FFT transform was padded with x zeros.
 
@@ -70,25 +88,33 @@ def istft(data, windowed=True, halved=True, padding=0):
     data : numpy array
         The signal
 
+    Notes
+    -----
+
+    Additional keyword arguments will be passed on to `transform`.
+
     """
-    if(halved):
+    if transform is None:
+        transform = scipy.ifft
+
+    if halved:
         data = numpy.hstack((data, data[-2:0:-1].conjugate()))
 
-    output = scipy.ifft(data)
+    output = transform(data, **kwargs)
 
-    if(padding):
+    if padding > 0:
         output = output[0:-(len(data) * padding / (padding + 1))]
 
-    if(windowed):
-        output = window.window(output)
+    if window is None:
+        window = cosine
+
+    if callable(window):
+        output = output * window(len(output))
 
     return scipy.real(output)
 
-fft = stft
-ifft = istft
 
-
-def spectrogram(data, framelength=1024, hopsize=None, overlap=None, transform=None, **kwargs):
+def spectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
     """
     Calculate the spectrogram of a signal
 
@@ -104,34 +130,40 @@ def spectrogram(data, framelength=1024, hopsize=None, overlap=None, transform=No
     overlap : int
         The signal frame overlap coefficient. Value x means
         1/x overlap. Defaults to 2.
-    windowed : boolean
-        Switch for turning on signal windowing. Defaults to True.
-    halved : boolean
-        Switch for turning on signal truncation. By default,
-        the fourier transform returns a symmetrically mirrored
-        spectrum. This additional data is not needed and can be
-        removed. Defaults to True.
 
     Returns
     -------
     data : numpy array
         The spectrogram
 
-    """
-    if transform is None:
-        transform = stft
+    Notes
+    -----
 
+    Additional keyword arguments will be passed on to `process`.
+
+    """
     if overlap is None:
         overlap = 2
 
     if hopsize is None:
         hopsize = framelength // overlap
 
+    # Pad input signal so it fits into framelength spec
+    data = numpy.hstack(
+        (
+            data,
+            numpy.zeros(
+                math.ceil(len(data) / framelength) * framelength - len(data)
+            )
+        )
+    )
+
     values = list(enumerate(
-        range(0, len(data) - framelength, hopsize)
+        range(0, len(data) - framelength + hopsize, hopsize)
     ))
+
     for j, i in values:
-        sig = transform(data[i:i + framelength], **kwargs) / (framelength // hopsize // 2)
+        sig = process(data[i:i + framelength], **kwargs) / (framelength // hopsize // 2)
 
         if(i == 0):
             output = numpy.zeros((len(values), sig.shape[0]), dtype=sig.dtype)
@@ -141,7 +173,7 @@ def spectrogram(data, framelength=1024, hopsize=None, overlap=None, transform=No
     return output
 
 
-def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, transform=None, **kwargs):
+def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
     """
     Calculate the inverse spectrogram of a signal
 
@@ -170,10 +202,12 @@ def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, transform=N
     data : numpy array
         The signal
 
-    """
-    if transform is None:
-        transform = istft
+    Notes
+    -----
 
+    Additional keyword arguments will be passed on to `iprocess`.
+
+    """
     if overlap is None:
         overlap = 2
 
@@ -183,7 +217,7 @@ def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, transform=N
     i = 0
     values = range(0, data.shape[0])
     for j in values:
-        sig = transform(data[j, :], **kwargs)
+        sig = iprocess(data[j, :], **kwargs)
 
         if(i == 0):
             output = numpy.zeros(
@@ -196,3 +230,29 @@ def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, transform=N
         i += hopsize
 
     return output
+
+
+def cosine(M):
+    """
+    Gernerate a halfcosine window of given length
+
+    Uses `scipy.signal.cosine` by default. However since this window
+    function has only recently been merged into mainline SciPy, a fallback
+    calculation is in place.
+
+    Parameters
+    ----------
+    M : int
+        Length of the window.
+
+    Returns
+    -------
+    data : numpy array
+        The window function
+
+    """
+    try:
+        import scipy.signal
+        return scipy.signal.cosine(M)
+    except AttributeError:
+        return numpy.sin(numpy.pi / M * (numpy.arange(0, M) + .5))
