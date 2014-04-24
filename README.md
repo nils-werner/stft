@@ -1,4 +1,4 @@
-stft
+STFT
 ====
 
 This is a package for calculating the short time fourier transform (spectrogram) or any
@@ -9,4 +9,4 @@ Installation
 
 You can install this library using `pip`:
 
-    pip install git+ssh://git@work.audiolabs.uni-erlangen.de/nils/stft.git#egg=stft
+    pip install git+ssh://git@github.com/audiolabs/python_stft.git#egg=stft
