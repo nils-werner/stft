@@ -1,5 +1,4 @@
 import setuptools
-import setuptools.command.develop
 
 
 setuptools.setup(
@@ -10,7 +9,7 @@ setuptools.setup(
     version='0.1',
 
     # Description
-    description='Fractional Fourier transform for NumPy.',
+    description='Short Time Fourier transform for NumPy.',
 
     # Your contact information
     author='Nils Werner',
