@@ -56,7 +56,7 @@ def process(data, window=None, halved=True, transform=None, padding=0, **kwargs)
     result = transform(data)
 
     if(halved):
-        result = result[0:result.size / 2 + 1]
+        result = result[0:result.size // 2 + 1]
 
     return result
 
