@@ -166,9 +166,9 @@ def spectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
         sig = process(data[i:i + framelength], **kwargs) / (framelength // hopsize // 2)
 
         if(i == 0):
-            output = numpy.zeros((len(values), sig.shape[0]), dtype=sig.dtype)
+            output = numpy.zeros((sig.shape[0], len(values)), dtype=sig.dtype)
 
-        output[j, :] = sig
+        output[:, j] = sig
 
     return output
 
@@ -215,9 +215,9 @@ def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
         hopsize = framelength // overlap
 
     i = 0
-    values = range(0, data.shape[0])
+    values = range(0, data.shape[1])
     for j in values:
-        sig = iprocess(data[j, :], **kwargs)
+        sig = iprocess(data[:, j], **kwargs)
 
         if(i == 0):
             output = numpy.zeros(
