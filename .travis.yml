@@ -1,10 +1,15 @@
 language: python
-
 python:
     - "2.6"
     - "2.7"
     - "3.2"
     - "3.3"
-
-install: pip install -e .
-script: nosetests
+virtualenv:
+    system_site_packages: true
+before_install:
+    - "sudo apt-get update -qq"
+    - "sudo apt-get install -qq python-numpy python-scipy python-nose python-matplotlib"
+install:
+    - "pip install -e ."
+script: 
+    - "nosetests"
