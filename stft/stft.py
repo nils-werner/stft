@@ -142,6 +142,9 @@ def spectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
     Additional keyword arguments will be passed on to `process`.
 
     """
+    if data.ndim > 1:
+        raise ValueError("Only single channel signals are allowed")
+
     if overlap is None:
         overlap = 2
 
@@ -208,6 +211,9 @@ def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
     Additional keyword arguments will be passed on to `iprocess`.
 
     """
+    if data.ndim != 2:
+        raise ValueError("2D spectrograms are allowed only")
+
     if overlap is None:
         overlap = 2
 
