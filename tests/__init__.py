@@ -1,6 +1,7 @@
 import stft
 import numpy
 import scipy.fftpack
+import nose
 
 
 def test_windowlength_errors():
@@ -30,9 +31,10 @@ def test_precision():
     assert numpy.allclose(a[framelen:-framelen], y[framelen:-framelen])
 
 
+@nose.tools.raises(NotImplementedError)
 def test_multichannel():
     """
-    Test if transform-inverse identity holds
+    Test for matrix input when it should be a vector
 
     """
     siglen = 2048
@@ -40,22 +42,17 @@ def test_multichannel():
     framelen = 512
 
     a = numpy.random.random((siglen, nchan))
-    try:
-        stft.spectrogram(a, framelength=framelen)
-    except ValueError:
-        pass
+    stft.spectrogram(a, framelength=framelen)
 
 
+@nose.tools.raises(NotImplementedError)
 def test_vector_inverse():
     """
-    Test if transform-inverse identity holds
+    Test for any dimensions that are not a matrix
 
     """
     siglen = 2048
     framelen = 512
 
     a = numpy.random.random(siglen)
-    try:
-        stft.ispectrogram(a, framelength=framelen)
-    except ValueError:
-        pass
+    stft.ispectrogram(a, framelength=framelen)

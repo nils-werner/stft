@@ -143,7 +143,7 @@ def spectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
 
     """
     if data.ndim > 1:
-        raise ValueError("Only single channel signals are allowed")
+        raise NotImplementedError("Only single channel signals are allowed")
 
     if overlap is None:
         overlap = 2
@@ -212,7 +212,7 @@ def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
 
     """
     if data.ndim != 2:
-        raise ValueError("2D spectrograms are allowed only")
+        raise NotImplementedError("2D spectrograms are allowed")
 
     if overlap is None:
         overlap = 2
