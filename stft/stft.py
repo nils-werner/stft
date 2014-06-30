@@ -121,7 +121,8 @@ def spectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
     Parameters
     ----------
     data : numpy array
-        The signal to be calculated.
+        The signal to be transformed. May be a 1D vector for single channel
+        or a 2D matrix for multi channel data.
     framelength : int
         The signal frame length. Defaults to 1024.
     hopsize : int
@@ -134,7 +135,7 @@ def spectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
     Returns
     -------
     data : numpy array
-        The spectrogram
+        The spectrogram (or tensor of spectograms)
 
     Notes
     -----
@@ -142,38 +143,49 @@ def spectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
     Additional keyword arguments will be passed on to `process`.
 
     """
-    if data.ndim > 1:
-        raise NotImplementedError("Only single channel signals are allowed")
-
     if overlap is None:
         overlap = 2
 
     if hopsize is None:
         hopsize = framelength // overlap
 
-    # Pad input signal so it fits into framelength spec
-    data = numpy.hstack(
-        (
-            data,
-            numpy.zeros(
-                math.ceil(len(data) / framelength) * framelength - len(data)
+    def traf(data):
+        # Pad input signal so it fits into framelength spec
+        data = numpy.hstack(
+            (
+                data,
+                numpy.zeros(
+                    math.ceil(len(data) / framelength) * framelength - len(data)
+                )
             )
         )
-    )
 
-    values = list(enumerate(
-        range(0, len(data) - framelength + hopsize, hopsize)
-    ))
+        values = list(enumerate(
+            range(0, len(data) - framelength + hopsize, hopsize)
+        ))
 
-    for j, i in values:
-        sig = process(data[i:i + framelength], **kwargs) / (framelength // hopsize // 2)
+        for j, i in values:
+            sig = process(data[i:i + framelength], **kwargs) / (framelength // hopsize // 2)
 
-        if(i == 0):
-            output = numpy.zeros((sig.shape[0], len(values)), dtype=sig.dtype)
+            if(i == 0):
+                output = numpy.zeros((sig.shape[0], len(values)), dtype=sig.dtype)
 
-        output[:, j] = sig
+            output[:, j] = sig
 
-    return output
+        return output
+
+    if data.ndim == 1:
+        return traf(data)
+    elif data.ndim == 2:
+        for i in range(data.shape[1]):
+            tmp = traf(data[:, i])
+
+            if i == 0:
+                out = numpy.empty((tmp.shape + (data.shape[1],)), dtype=tmp.dtype)
+            out[:, :, i] = tmp
+        return out
+    else:
+        raise ValueError("spectrogram: Only 1D or 2D input data allowed")
 
 
 def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
@@ -183,7 +195,8 @@ def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
     Parameters
     ----------
     data : numpy array
-        The spectrogram to be calculated.
+        The spectrogram to be inverted. May be a 2D matrix for single channel
+        or a 3D tensor for multi channel data.
     framelength : int
         The signal frame length. Defaults to 1024.
     hopsize : int
@@ -203,7 +216,7 @@ def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
     Returns
     -------
     data : numpy array
-        The signal
+        The signal (or matrix of signals)
 
     Notes
     -----
@@ -211,31 +224,42 @@ def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
     Additional keyword arguments will be passed on to `iprocess`.
 
     """
-    if data.ndim != 2:
-        raise NotImplementedError("2D spectrograms are allowed")
-
     if overlap is None:
         overlap = 2
 
     if hopsize is None:
         hopsize = framelength // overlap
 
-    i = 0
-    values = range(0, data.shape[1])
-    for j in values:
-        sig = iprocess(data[:, j], **kwargs)
+    def traf(data):
+        i = 0
+        values = range(0, data.shape[1])
+        for j in values:
+            sig = iprocess(data[:, j], **kwargs)
 
-        if(i == 0):
-            output = numpy.zeros(
-                framelength + (len(values) - 1) * hopsize,
-                dtype=sig.dtype
-            )
+            if(i == 0):
+                output = numpy.zeros(
+                    framelength + (len(values) - 1) * hopsize,
+                    dtype=sig.dtype
+                )
 
-        output[i:i + framelength] += sig
+            output[i:i + framelength] += sig
 
-        i += hopsize
+            i += hopsize
 
-    return output
+        return output
+
+    if data.ndim == 2:
+        return traf(data)
+    elif data.ndim == 3:
+        for i in range(data.shape[2]):
+            tmp = traf(data[:, :, i])
+
+            if i == 0:
+                out = numpy.empty((tmp.shape + (data.shape[2],)), dtype=tmp.dtype)
+            out[:, i] = tmp
+        return out
+    else:
+        raise ValueError("ispectrogram: Only 2D or 3D input data allowed")
 
 
 def cosine(M):

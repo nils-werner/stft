@@ -31,28 +31,18 @@ def test_precision():
     assert numpy.allclose(a[framelen:-framelen], y[framelen:-framelen])
 
 
-@nose.tools.raises(NotImplementedError)
 def test_multichannel():
     """
-    Test for matrix input when it should be a vector
+    Test if multi channel data works
 
     """
-    siglen = 2048
-    nchan = 2
-    framelen = 512
-
-    a = numpy.random.random((siglen, nchan))
-    stft.spectrogram(a, framelength=framelen)
-
-
-@nose.tools.raises(NotImplementedError)
-def test_vector_inverse():
-    """
-    Test for any dimensions that are not a matrix
-
-    """
+    channels = 2
     siglen = 2048
     framelen = 512
 
-    a = numpy.random.random(siglen)
-    stft.ispectrogram(a, framelength=framelen)
+    a = numpy.random.random((siglen, channels))
+    x = stft.spectrogram(a, framelength=framelen)
+    y = stft.ispectrogram(x, framelength=framelen)
+
+    # Crop first and last frame
+    assert numpy.allclose(a[framelen:-framelen, :], y[framelen:-framelen, :])
