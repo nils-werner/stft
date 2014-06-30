@@ -20,7 +20,7 @@ setuptools.setup(
 
     # Packages in this project
     # find_packages() finds all these automatically for you
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=['tests']),
 
     # Dependencies, this installs the entire Python scientific
     # computations stack
