@@ -35,7 +35,7 @@ setuptools.setup(
     test_suite="nose.collector",
 
     classifiers=[
-        'Development Status :: 2 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: Telecommunications Industry',
         'Intended Audience :: Science/Research',
