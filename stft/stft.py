@@ -155,7 +155,7 @@ def spectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
             (
                 data,
                 numpy.zeros(
-                    math.ceil(len(data) / framelength) * framelength - len(data)
+                    int(math.ceil(len(data) / framelength) * framelength - len(data))
                 )
             )
         )
