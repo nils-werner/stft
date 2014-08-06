@@ -9,3 +9,4 @@ src/*.egg-info
 *.egg-info/
 docs/build
 docs/source/api
+.tox
