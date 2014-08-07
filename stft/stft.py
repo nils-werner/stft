@@ -142,6 +142,8 @@ def spectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
 
     Additional keyword arguments will be passed on to `process`.
 
+    The data will be padded to be a multiple of the desired FFT length.
+
     """
     if overlap is None:
         overlap = 2
@@ -222,6 +224,16 @@ def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
     -----
 
     Additional keyword arguments will be passed on to `iprocess`.
+
+    During transform the data will be padded to be a multiple of the desired
+    FFT length. Hence, the result of the inverse transform might be longer
+    than the input signal. However it is safe to remove the additional data,
+    e.g. by using
+
+        output.resize(input.shape)
+
+    where `input` is the input of `stft.spectrogram()` and `output` is the
+    output of `stft.ispectrogram()``
 
     """
     if overlap is None:

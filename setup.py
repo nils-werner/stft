@@ -44,5 +44,5 @@ setuptools.setup(
         'Topic :: Multimedia :: Sound/Audio :: Analysis',
         'Topic :: Multimedia :: Sound/Audio :: Sound Synthesis'
     ],
-    zip_safe=False,
+    zip_safe=True,
 )
