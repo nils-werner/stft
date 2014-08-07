@@ -1,1 +1,1 @@
-from stft import spectrogram, ispectrogram
+from .stft import spectrogram, ispectrogram
