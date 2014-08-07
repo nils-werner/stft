@@ -1,7 +1,7 @@
 language: python
 python:
     - 2.7
-    - 3.2
+#    - 3.2 # Broken, see https://github.com/travis-ci/travis-ci/issues/2277
 virtualenv:
     system_site_packages: true
 before_install:
