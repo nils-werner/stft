@@ -25,8 +25,8 @@ setuptools.setup(
     # Dependencies, this installs the entire Python scientific
     # computations stack
     install_requires=[
-        'numpy>=1.8',
-        'scipy>=0.13.0',
+        'numpy>=1.6',
+        'scipy>=0.9',
     ],
 
     tests_require=[
