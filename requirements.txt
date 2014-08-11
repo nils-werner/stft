@@ -2,3 +2,4 @@ nose
 numpy
 scipy
 sphinxcontrib-napoleon
+tox
