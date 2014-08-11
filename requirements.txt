@@ -2,4 +2,5 @@ nose
 numpy
 scipy
 sphinxcontrib-napoleon
+sphinx_rtd_theme
 tox
