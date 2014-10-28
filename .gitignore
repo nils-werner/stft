@@ -10,3 +10,5 @@ src/*.egg-info
 docs/build
 docs/source/api
 .tox
+.coverage
+.cache

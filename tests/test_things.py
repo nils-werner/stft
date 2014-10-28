@@ -1,7 +1,6 @@
 import stft
 import numpy
 import scipy.fftpack
-import nose
 
 
 def test_windowlength_errors():

@@ -9,7 +9,14 @@ import math
 import scipy.interpolate
 
 
-def process(data, window=None, halved=True, transform=None, padding=0, **kwargs):
+def process(
+    data,
+    window=None,
+    halved=True,
+    transform=None,
+    padding=0,
+    **kwargs
+):
     """
     Calculate a windowed transform of a signal
 
@@ -61,7 +68,14 @@ def process(data, window=None, halved=True, transform=None, padding=0, **kwargs)
     return result
 
 
-def iprocess(data, window=None, halved=True, transform=None, padding=0, **kwargs):
+def iprocess(
+    data,
+    window=None,
+    halved=True,
+    transform=None,
+    padding=0,
+    **kwargs
+):
     """
     Calculate the inverse short time fourier transform of a spectrum
 
@@ -114,7 +128,13 @@ def iprocess(data, window=None, halved=True, transform=None, padding=0, **kwargs
     return scipy.real(output)
 
 
-def spectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
+def spectrogram(
+    data,
+    framelength=1024,
+    hopsize=None,
+    overlap=None,
+    **kwargs
+):
     """
     Calculate the spectrogram of a signal
 
@@ -157,7 +177,11 @@ def spectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
             (
                 data,
                 numpy.zeros(
-                    int(math.ceil(len(data) / framelength) * framelength - len(data))
+                    int(
+                        math.ceil(
+                            len(data) / framelength
+                        ) * framelength - len(data)
+                    )
                 )
             )
         )
@@ -167,10 +191,13 @@ def spectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
         ))
 
         for j, i in values:
-            sig = process(data[i:i + framelength], **kwargs) / (framelength // hopsize // 2)
+            sig = process(data[i:i + framelength], **kwargs) \
+                / (framelength // hopsize // 2)
 
             if(i == 0):
-                output = numpy.zeros((sig.shape[0], len(values)), dtype=sig.dtype)
+                output = numpy.zeros(
+                    (sig.shape[0], len(values)), dtype=sig.dtype
+                )
 
             output[:, j] = sig
 
@@ -183,7 +210,9 @@ def spectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
             tmp = traf(data[:, i])
 
             if i == 0:
-                out = numpy.empty((tmp.shape + (data.shape[1],)), dtype=tmp.dtype)
+                out = numpy.empty(
+                    (tmp.shape + (data.shape[1],)), dtype=tmp.dtype
+                )
             out[:, :, i] = tmp
         return out
     else:
@@ -267,7 +296,9 @@ def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
             tmp = traf(data[:, :, i])
 
             if i == 0:
-                out = numpy.empty((tmp.shape + (data.shape[2],)), dtype=tmp.dtype)
+                out = numpy.empty(
+                    (tmp.shape + (data.shape[2],)), dtype=tmp.dtype
+                )
             out[:, i] = tmp
         return out
     else:

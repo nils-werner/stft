@@ -1,0 +1,2 @@
+[run]
+omit = devel.py, setup.py
