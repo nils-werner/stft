@@ -1,0 +1,6 @@
+image: drone/scipy:2.7
+script: 
+    - pip install python-dateutil pytz pytest pytest-cov pytest-pep8
+    - pip install pytz
+    - pip install -e .
+    - py.test
