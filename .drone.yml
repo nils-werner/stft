@@ -4,3 +4,10 @@ script:
     - pip install python-dateutil pytz pytest pytest-cov pytest-pep8
     - pip install -e .
     - py.test
+    - python setup.py sdist --formats gztar
+
+deploy:
+  ssh:
+    target: $SERVER
+    artifacts:
+      - dist/*

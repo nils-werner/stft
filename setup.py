@@ -6,7 +6,7 @@ setuptools.setup(
     name='stft',
 
     # Version
-    version='0.4.2',
+    version='0.4.3',
 
     # Description
     description='Short Time Fourier transform for NumPy.',
