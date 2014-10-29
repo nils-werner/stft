@@ -4,3 +4,6 @@ scipy
 sphinxcontrib-napoleon
 sphinx_rtd_theme
 tox
+pytest
+pytest-cov
+pytest-pep8
