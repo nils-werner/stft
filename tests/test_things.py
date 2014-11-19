@@ -44,6 +44,14 @@ def test_maxdim():
         stft.ispectrogram(b)
 
 
+def test_issue1():
+    a = numpy.random.random((512, 1))
+
+    b = stft.spectrogram(a)
+
+    assert b.ndim == 2
+
+
 def test_fallback():
     try:
         import scipy.signal

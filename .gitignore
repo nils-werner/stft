@@ -12,3 +12,4 @@ docs/source/api
 .tox
 .coverage
 .cache
+devel.py

@@ -171,6 +171,8 @@ def spectrogram(
     if hopsize is None:
         hopsize = framelength // overlap
 
+    data = numpy.squeeze(data)
+
     def traf(data):
         # Pad input signal so it fits into framelength spec
         data = numpy.hstack(
