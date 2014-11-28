@@ -142,13 +142,13 @@ def spectrogram(
         In case of a multi channel signal, the data must be in the shape of
         :code:`samples x channels`.
     framelength : int
-        The signal frame length. Defaults to 1024.
+        The signal frame length. Defaults to :code:`1024`.
     hopsize : int
-        The signal frame hopsize. Defaults to None. Setting this
+        The signal frame hopsize. Defaults to :code:`None`. Setting this
         value will override :code:`overlap`.
     overlap : int
-        The signal frame overlap coefficient. Value x means
-        1/x overlap. Defaults to 2.
+        The signal frame overlap coefficient. Value :code:`x` means
+        :code:`1/x` overlap. Defaults to :code:`2`.
     centered : boolean
         Pad input signal so that the first and last window are centered around
         the beginning of the signal. Defaults to true.
@@ -255,18 +255,18 @@ def ispectrogram(
         In case of a multi channel signal, the data must be in the shape of
         :code:`bins x frames x channels`.
     framelength : int
-        The signal frame length. Defaults to 1024.
+        The signal frame length. Defaults to :code:`1024`.
     hopsize : int
-        The signal frame hopsize. Defaults to None. Setting this
+        The signal frame hopsize. Defaults to :code:`None`. Setting this
         value will override :code:`overlap`.
     overlap : int
-        The signal frame overlap coefficient. Value x means
-        1/x overlap. Defaults to 2.
+        The signal frame overlap coefficient. Value :code:`x` means
+        :code:`1/x` overlap. Defaults to :code:`2`.
     centered : boolean
         Pad input signal so that the first and last window are centered around
-        the beginning of the signal. Defaults to true.
+        the beginning of the signal. Defaults to :code:`True`.
     windowed : boolean
-        Switch for turning on signal windowing. Defaults to True.
+        Switch for turning on signal windowing. Defaults to :code:`True`.
     halved : boolean
         Switch for turning on signal truncation. By default,
         the fourier transform returns a symmetrically mirrored
