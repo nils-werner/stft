@@ -139,6 +139,8 @@ def spectrogram(
     data : array_like
         The signal to be transformed. May be a 1D vector for single channel
         or a 2D matrix for multi channel data.
+        In case of a multi channel signal, the data must be in the shape of
+        samples x channels.
     framelength : int
         The signal frame length. Defaults to 1024.
     hopsize : int
@@ -155,6 +157,8 @@ def spectrogram(
     -------
     data : array_like
         The spectrogram (or tensor of spectograms)
+        In case of a multi channel signal, the data is formatted as
+        bins x frames x channels.
 
     Notes
     -----
@@ -244,6 +248,8 @@ def ispectrogram(
     data : array_like
         The spectrogram to be inverted. May be a 2D matrix for single channel
         or a 3D tensor for multi channel data.
+        In case of a multi channel signal, the data must be in the shape of
+        bins x frames x channels.
     framelength : int
         The signal frame length. Defaults to 1024.
     hopsize : int
@@ -266,7 +272,9 @@ def ispectrogram(
     Returns
     -------
     data : array_like
-        The signal (or matrix of signals)
+        The signal (or matrix of signals).
+        In case of a multi channel signal, the data is formatted as
+        samples x channels.
 
     Notes
     -----
