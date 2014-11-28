@@ -178,7 +178,7 @@ def spectrogram(
     if centered:
         padtuple = [(0, 0)] * data.ndim
         padtuple[0] = (framelength // 2, framelength // 2)
-        data = numpy.pad(
+        data = numpy.lib.pad(
             data,
             pad_width=padtuple,
             mode='constant',
