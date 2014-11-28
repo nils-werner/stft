@@ -15,7 +15,15 @@
 
 import sys
 import os
-import sphinx_rtd_theme
+
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
+if not on_rtd:
+    import sphinx_rtd_theme
+    html_theme = 'sphinx_rtd_theme'
+    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+else:
+    html_theme = 'default'
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -36,6 +44,8 @@ extensions = [
     'sphinx.ext.pngmath',
     'sphinx.ext.viewcode',
     'sphinxcontrib.napoleon',
+    'sphinx.ext.autosummary',
+    'numpydoc'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

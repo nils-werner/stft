@@ -9,7 +9,7 @@ Contents:
    :maxdepth: 2
 
    installation
-   api/stft
+   examples
 
 
 Indices and tables
@@ -18,4 +18,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
