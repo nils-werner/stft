@@ -1,4 +1,4 @@
-image: drone/scipy:2.7
+image: drone/scipy:2.7-pip
 script: 
     - pip install -r requirements.txt
     - pip install python-dateutil pytz pytest pytest-cov pytest-pep8
