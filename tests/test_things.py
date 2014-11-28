@@ -51,9 +51,7 @@ def test_precision(channels, padding, signal, framelength):
     y = stft.ispectrogram(x, framelength=framelength, padding=padding)
 
     # Crop first and last frame
-    assert numpy.allclose(
-        a[framelength:-framelength], y[framelength:-framelength]
-    )
+    assert numpy.allclose(a, y)
 
 
 def test_rms(channels, padding, signal, framelength):
@@ -67,11 +65,7 @@ def test_rms(channels, padding, signal, framelength):
     y = stft.ispectrogram(x, framelength=framelength, padding=padding)
 
     # Crop first and last frame
-    assert numpy.sqrt(
-        numpy.mean(
-            (a[framelength:-framelength] - y[framelength:-framelength]) ** 2
-        )
-    ) < 1e-7
+    assert numpy.sqrt(numpy.mean((a - y) ** 2)) < 1e-8
 
 
 def test_maxdim():

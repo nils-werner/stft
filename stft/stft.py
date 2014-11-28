@@ -133,6 +133,7 @@ def spectrogram(
     framelength=1024,
     hopsize=None,
     overlap=None,
+    centered=True,
     **kwargs
 ):
     """
@@ -151,6 +152,9 @@ def spectrogram(
     overlap : int
         The signal frame overlap coefficient. Value x means
         1/x overlap. Defaults to 2.
+    centered : boolean
+        Pad input signal so that the first and last window are centered around
+        the beginning of the signal. Defaults to true.
 
     Returns
     -------
@@ -172,6 +176,16 @@ def spectrogram(
         hopsize = framelength // overlap
 
     data = numpy.squeeze(data)
+
+    if centered:
+        padtuple = [(0, 0)] * data.ndim
+        padtuple[0] = (framelength // 2, framelength // 2)
+        data = numpy.pad(
+            data,
+            pad_width=padtuple,
+            mode='constant',
+            constant_values=0
+        )
 
     def traf(data):
         # Pad input signal so it fits into framelength spec
@@ -221,7 +235,14 @@ def spectrogram(
         raise ValueError("spectrogram: Only 1D or 2D input data allowed")
 
 
-def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
+def ispectrogram(
+    data,
+    framelength=1024,
+    hopsize=None,
+    overlap=None,
+    centered=True,
+    **kwargs
+):
     """
     Calculate the inverse spectrogram of a signal
 
@@ -238,6 +259,9 @@ def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
     overlap : int
         The signal frame overlap coefficient. Value x means
         1/x overlap. Defaults to 2.
+    centered : boolean
+        Pad input signal so that the first and last window are centered around
+        the beginning of the signal. Defaults to true.
     windowed : boolean
         Switch for turning on signal windowing. Defaults to True.
     halved : boolean
@@ -292,7 +316,7 @@ def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
         return output
 
     if data.ndim == 2:
-        return traf(data)
+        out = traf(data)
     elif data.ndim == 3:
         for i in range(data.shape[2]):
             tmp = traf(data[:, :, i])
@@ -302,9 +326,15 @@ def ispectrogram(data, framelength=1024, hopsize=None, overlap=None, **kwargs):
                     (tmp.shape + (data.shape[2],)), dtype=tmp.dtype
                 )
             out[:, i] = tmp
-        return out
     else:
         raise ValueError("ispectrogram: Only 2D or 3D input data allowed")
+
+    if centered:
+        slicetuple = [slice(None)] * out.ndim
+        slicetuple[0] = slice(framelength // 2, -framelength // 2)
+        return out[slicetuple]
+    else:
+        return out
 
 
 def cosine(M):
