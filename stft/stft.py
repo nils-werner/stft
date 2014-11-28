@@ -24,15 +24,15 @@ def process(
     data : array_like
         The signal to be calculated.
     window : callable
-        Window to be used for deringing. Can be False to disable windowing.
-        Defaults to `scipy.signal.cosine`.
+        Window to be used for deringing. Can be :code:`False` to disable
+        windowing. Defaults to :code:`scipy.signal.cosine`.
     halved : boolean
         Switch for turning on signal truncation. By default,
         the fourier transform of real signals returns a symmetrically mirrored
         spectrum. This additional data is not needed and can be
-        removed. Defaults to True.
+        removed. Defaults to :code:`True`.
     transform : callable
-        The transform to be used. Defaults to `scipy.fft.
+        The transform to be used. Defaults to :code:`scipy.fft`.
     padding : int
         Zero-pad signal with x times the number of samples.
 
@@ -43,7 +43,7 @@ def process(
 
     Notes
     -----
-    Additional keyword arguments will be passed on to `transform`.
+    Additional keyword arguments will be passed on to :code:`transform`.
 
     """
     if transform is None:
@@ -81,16 +81,16 @@ def iprocess(
     data : array_like
         The spectrum to be calculated.
     window : callable
-        Window to be used for deringing. Can be False to disable windowing.
-        Defaults to `scipy.signal.cosine`.
+        Window to be used for deringing. Can be :code:`False` to disable
+        windowing. Defaults to :code:`scipy.signal.cosine`.
     halved : boolean
         Switch for turning on signal truncation. For real output signals,
         the inverse fourier transform consumes a symmetrically
         mirrored spectrum. This additional data is not needed
-        and can be removed. Setting this value to True will
-        automatically create a mirrored spectrum. Defaults to True.
+        and can be removed. Setting this value to :code:`True` will
+        automatically create a mirrored spectrum. Defaults to :code:`True`.
     transform : callable
-        The transform to be used. Defaults to `scipy.ifft`.
+        The transform to be used. Defaults to :code:`scipy.ifft`.
     padding : int
         Signal before FFT transform was padded with x zeros.
 
@@ -101,7 +101,7 @@ def iprocess(
 
     Notes
     -----
-    Additional keyword arguments will be passed on to `transform`.
+    Additional keyword arguments will be passed on to :code:`transform`.
 
     """
     if transform is None:
@@ -140,12 +140,12 @@ def spectrogram(
         The signal to be transformed. May be a 1D vector for single channel
         or a 2D matrix for multi channel data.
         In case of a multi channel signal, the data must be in the shape of
-        samples x channels.
+        :code:`samples x channels`.
     framelength : int
         The signal frame length. Defaults to 1024.
     hopsize : int
         The signal frame hopsize. Defaults to None. Setting this
-        value will override `overlap`.
+        value will override :code:`overlap`.
     overlap : int
         The signal frame overlap coefficient. Value x means
         1/x overlap. Defaults to 2.
@@ -158,13 +158,17 @@ def spectrogram(
     data : array_like
         The spectrogram (or tensor of spectograms)
         In case of a multi channel signal, the data is formatted as
-        bins x frames x channels.
+        :code:`bins x frames x channels`.
 
     Notes
     -----
-    Additional keyword arguments will be passed on to `process`.
+    Additional keyword arguments will be passed on to :code:`process`.
 
     The data will be padded to be a multiple of the desired FFT length.
+
+    See Also
+    --------
+    stft.stft.process : The function used to transform the data
 
     """
     if overlap is None:
@@ -249,12 +253,12 @@ def ispectrogram(
         The spectrogram to be inverted. May be a 2D matrix for single channel
         or a 3D tensor for multi channel data.
         In case of a multi channel signal, the data must be in the shape of
-        bins x frames x channels.
+        :code:`bins x frames x channels`.
     framelength : int
         The signal frame length. Defaults to 1024.
     hopsize : int
         The signal frame hopsize. Defaults to None. Setting this
-        value will override `overlap`.
+        value will override :code:`overlap`.
     overlap : int
         The signal frame overlap coefficient. Value x means
         1/x overlap. Defaults to 2.
@@ -267,28 +271,34 @@ def ispectrogram(
         Switch for turning on signal truncation. By default,
         the fourier transform returns a symmetrically mirrored
         spectrum. This additional data is not needed and can be
-        removed. Defaults to True.
+        removed. Defaults to :code:`True`.
 
     Returns
     -------
     data : array_like
         The signal (or matrix of signals).
         In case of a multi channel signal, the data is formatted as
-        samples x channels.
+        :code:`samples x channels`.
 
     Notes
     -----
-    Additional keyword arguments will be passed on to `iprocess`.
+    Additional keyword arguments will be passed on to :code:`iprocess`.
 
     During transform the data will be padded to be a multiple of the desired
     FFT length. Hence, the result of the inverse transform might be longer
     than the input signal. However it is safe to remove the additional data,
     e.g. by using
 
+    .. code:: python
+
         output.resize(input.shape)
 
-    where `input` is the input of `stft.spectrogram()` and `output` is the
-    output of `stft.ispectrogram()``
+    where :code:`input` is the input of :code:`stft.spectrogram()` and
+    :code:`output` is the output of :code:`stft.ispectrogram()`
+
+    See Also
+    --------
+    stft.stft.iprocess : The function used to transform the data
 
     """
     if overlap is None:
@@ -340,7 +350,7 @@ def ispectrogram(
 def cosine(M):
     """Gernerate a halfcosine window of given length
 
-    Uses `scipy.signal.cosine` by default. However since this window
+    Uses :code:`scipy.signal.cosine` by default. However since this window
     function has only recently been merged into mainline SciPy, a fallback
     calculation is in place.
 
