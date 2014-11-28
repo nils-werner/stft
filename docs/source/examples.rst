@@ -16,8 +16,8 @@ Loading a file and calculating the spectrogram.
 
 .. seealso:: module :py:mod:`stft.spectrogram`
 
-Scene Example
--------------
+Back and Forth Example
+----------------------
 
 Loading a file and calculating the spectrogram, its inverse and saving the
 result.

@@ -10,6 +10,7 @@ Contents:
 
    installation
    examples
+   modules
 
 
 Indices and tables
