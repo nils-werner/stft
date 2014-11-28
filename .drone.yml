@@ -4,10 +4,11 @@ script:
     - pip install python-dateutil pytz pytest pytest-cov pytest-pep8
     - pip install -e .
     - py.test
+    - python setup.py build_sphinx
     - python setup.py sdist --formats gztar
 
 deploy:
-  ssh:
-    target: $SERVER
-    artifacts:
-      - dist/*
+    bash:
+        script:
+            - scp -o StrictHostKeyChecking=no -P 22 -r dist/* $SERVER/pypi/
+            - rsync -a --delete-before docs/build/html/* $SERVER/docs/stft
