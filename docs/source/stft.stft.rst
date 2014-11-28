@@ -1,19 +1,10 @@
 stft package
 ============
 
-
-Submodules
------------
-
-.. toctree::
-
-    stft.stft
-
-
 Module contents
 ---------------
 
-.. automodule:: stft
+.. automodule:: stft.stft
     :members:
     :undoc-members:
     :show-inheritance:

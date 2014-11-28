@@ -1,1 +1,4 @@
-from .stft import spectrogram, ispectrogram
+import stft
+from stft import spectrogram, ispectrogram
+
+__all__ = ["spectrogram", "ispectrogram"]

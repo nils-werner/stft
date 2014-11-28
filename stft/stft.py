@@ -17,12 +17,11 @@ def process(
     padding=0,
     **kwargs
 ):
-    """
-    Calculate a windowed transform of a signal
+    """Calculate a windowed transform of a signal
 
     Parameters
     ----------
-    data : numpy array
+    data : array_like
         The signal to be calculated.
     window : callable
         Window to be used for deringing. Can be False to disable windowing.
@@ -39,12 +38,11 @@ def process(
 
     Returns
     -------
-    data : numpy array
+    data : array_like
         The spectrum
 
     Notes
     -----
-
     Additional keyword arguments will be passed on to `transform`.
 
     """
@@ -76,12 +74,11 @@ def iprocess(
     padding=0,
     **kwargs
 ):
-    """
-    Calculate the inverse short time fourier transform of a spectrum
+    """Calculate the inverse short time fourier transform of a spectrum
 
     Parameters
     ----------
-    data : numpy array
+    data : array_like
         The spectrum to be calculated.
     window : callable
         Window to be used for deringing. Can be False to disable windowing.
@@ -99,12 +96,11 @@ def iprocess(
 
     Returns
     -------
-    data : numpy array
+    data : array_like
         The signal
 
     Notes
     -----
-
     Additional keyword arguments will be passed on to `transform`.
 
     """
@@ -136,12 +132,11 @@ def spectrogram(
     centered=True,
     **kwargs
 ):
-    """
-    Calculate the spectrogram of a signal
+    """Calculate the spectrogram of a signal
 
     Parameters
     ----------
-    data : numpy array
+    data : array_like
         The signal to be transformed. May be a 1D vector for single channel
         or a 2D matrix for multi channel data.
     framelength : int
@@ -158,12 +153,11 @@ def spectrogram(
 
     Returns
     -------
-    data : numpy array
+    data : array_like
         The spectrogram (or tensor of spectograms)
 
     Notes
     -----
-
     Additional keyword arguments will be passed on to `process`.
 
     The data will be padded to be a multiple of the desired FFT length.
@@ -243,12 +237,11 @@ def ispectrogram(
     centered=True,
     **kwargs
 ):
-    """
-    Calculate the inverse spectrogram of a signal
+    """Calculate the inverse spectrogram of a signal
 
     Parameters
     ----------
-    data : numpy array
+    data : array_like
         The spectrogram to be inverted. May be a 2D matrix for single channel
         or a 3D tensor for multi channel data.
     framelength : int
@@ -272,12 +265,11 @@ def ispectrogram(
 
     Returns
     -------
-    data : numpy array
+    data : array_like
         The signal (or matrix of signals)
 
     Notes
     -----
-
     Additional keyword arguments will be passed on to `iprocess`.
 
     During transform the data will be padded to be a multiple of the desired
@@ -338,8 +330,7 @@ def ispectrogram(
 
 
 def cosine(M):
-    """
-    Gernerate a halfcosine window of given length
+    """Gernerate a halfcosine window of given length
 
     Uses `scipy.signal.cosine` by default. However since this window
     function has only recently been merged into mainline SciPy, a fallback
@@ -352,7 +343,7 @@ def cosine(M):
 
     Returns
     -------
-    data : numpy array
+    data : array_like
         The window function
 
     """
