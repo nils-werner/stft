@@ -4,6 +4,31 @@ import pytest
 import scipy.fftpack
 
 
+@pytest.fixture(params=[1, 2])
+def channels(request):
+    return request.param
+
+
+@pytest.fixture(params=[0, 1, 4])
+def padding(request):
+    return request.param
+
+
+@pytest.fixture(params=[2048])
+def length(request):
+    return request.param
+
+
+@pytest.fixture
+def signal(channels, length):
+    return numpy.squeeze(numpy.random.random((length, channels)))
+
+
+@pytest.fixture(params=[512])
+def framelength(request):
+    return request.param
+
+
 def test_windowlength_errors():
     """
     Test if way too short signals can be transformed
@@ -15,44 +40,38 @@ def test_windowlength_errors():
     stft.spectrogram(numpy.random.random(siglen), framelength=framelen)
 
 
-def test_precision():
+def test_precision(channels, padding, signal, framelength):
     """
     Test if transform-inverse identity holds
 
     """
-    for channels in [1, 2]:
-        for padding in [0, 1, 4]:
-            siglen = 2048
-            framelen = 512
+    a = signal
 
-            a = numpy.squeeze(numpy.random.random((siglen, channels)))
-            x = stft.spectrogram(a, framelength=framelen, padding=padding)
-            y = stft.ispectrogram(x, framelength=framelen, padding=padding)
+    x = stft.spectrogram(a, framelength=framelength, padding=padding)
+    y = stft.ispectrogram(x, framelength=framelength, padding=padding)
 
-            # Crop first and last frame
-            assert numpy.allclose(a[framelen:-framelen], y[framelen:-framelen])
+    # Crop first and last frame
+    assert numpy.allclose(
+        a[framelength:-framelength], y[framelength:-framelength]
+    )
 
 
-def test_rms():
+def test_rms(channels, padding, signal, framelength):
     """
     Test if transform-inverse identity holds
 
     """
-    for channels in [1, 2]:
-        for padding in [0, 1, 4]:
-            siglen = 2048
-            framelen = 512
+    a = signal
 
-            a = numpy.squeeze(numpy.random.random((siglen, channels)))
-            x = stft.spectrogram(a, framelength=framelen, padding=padding)
-            y = stft.ispectrogram(x, framelength=framelen, padding=padding)
+    x = stft.spectrogram(a, framelength=framelength, padding=padding)
+    y = stft.ispectrogram(x, framelength=framelength, padding=padding)
 
-            # Crop first and last frame
-            assert numpy.sqrt(
-                numpy.mean(
-                    (a[framelen:-framelen] - y[framelen:-framelen]) ** 2
-                )
-            ) < 1e-7
+    # Crop first and last frame
+    assert numpy.sqrt(
+        numpy.mean(
+            (a[framelength:-framelength] - y[framelength:-framelength]) ** 2
+        )
+    ) < 1e-7
 
 
 def test_maxdim():
