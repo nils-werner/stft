@@ -33,6 +33,28 @@ def test_precision():
             assert numpy.allclose(a[framelen:-framelen], y[framelen:-framelen])
 
 
+def test_rms():
+    """
+    Test if transform-inverse identity holds
+
+    """
+    for channels in [1, 2]:
+        for padding in [0, 1, 4]:
+            siglen = 2048
+            framelen = 512
+
+            a = numpy.squeeze(numpy.random.random((siglen, channels)))
+            x = stft.spectrogram(a, framelength=framelen, padding=padding)
+            y = stft.ispectrogram(x, framelength=framelen, padding=padding)
+
+            # Crop first and last frame
+            assert numpy.sqrt(
+                numpy.mean(
+                    (a[framelen:-framelen] - y[framelen:-framelen]) ** 2
+                )
+            ) < 1e-7
+
+
 def test_maxdim():
     a = numpy.random.random((512, 2, 2))
 
