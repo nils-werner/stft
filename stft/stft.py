@@ -56,7 +56,15 @@ def process(
         data = data * window(len(data))
 
     if padding > 0:
-        data = numpy.hstack((data, numpy.zeros(len(data) * padding)))
+        data = numpy.lib.pad(
+            data,
+            pad_width=(
+                0,
+                len(data) * padding
+            ),
+            mode='constant',
+            constant_values=0
+        )
 
     result = transform(data)
 
@@ -195,17 +203,18 @@ def spectrogram(
 
     def traf(data):
         # Pad input signal so it fits into framelength spec
-        data = numpy.hstack(
-            (
-                data,
-                numpy.zeros(
-                    int(
-                        math.ceil(
-                            len(data) / framelength
-                        ) * framelength - len(data)
-                    )
+        data = numpy.lib.pad(
+            data,
+            pad_width=(
+                0,
+                int(
+                    math.ceil(
+                        len(data) / framelength
+                    ) * framelength - len(data)
                 )
-            )
+            ),
+            mode='constant',
+            constant_values=0
         )
 
         values = list(enumerate(

@@ -11,4 +11,4 @@ Installation
 
 You can install this library using `pip`:
 
-    pip install git+ssh://git@github.com/audiolabs/python_stft.git@0.4.2#egg=stft
+    pip install stft
