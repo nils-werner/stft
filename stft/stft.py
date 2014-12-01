@@ -102,7 +102,9 @@ def iprocess(
 
     """
     if halved:
-        data = numpy.hstack((data, data[-2:0:-1].conjugate()))
+        data = numpy.lib.pad(data, (0, data.shape[0] - 2), 'reflect')
+        start = data.shape[0] // 2 + 1
+        data[start:] = data[start:].conjugate()
 
     output = transform(data, **kwargs)
 
