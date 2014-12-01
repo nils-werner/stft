@@ -47,6 +47,9 @@ def process(
     if halved and transform == scipy.fft:
         transform = numpy.fft.rfft
 
+    if halved:
+        transform = numpy.fft.rfft
+
     data = data * window
 
     if padding > 0:
