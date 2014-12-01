@@ -7,7 +7,7 @@ if __name__ == "__main__":
         name='stft',
 
         # Version
-        version='0.4.6',
+        version='0.4.7',
 
         # Description
         description='Short Time Fourier transform for NumPy.',
