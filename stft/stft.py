@@ -11,7 +11,7 @@ import scipy.interpolate
 
 def process(
     data,
-    window=None,
+    window,
     halved=True,
     transform=None,
     padding=0,
@@ -23,9 +23,8 @@ def process(
     ----------
     data : array_like
         The signal to be calculated.
-    window : callable
-        Window to be used for deringing. Can be :code:`False` to disable
-        windowing. Defaults to :code:`scipy.signal.cosine`.
+    window : array_like
+        Tapering window
     halved : boolean
         Switch for turning on signal truncation. By default,
         the fourier transform of real signals returns a symmetrically mirrored
@@ -49,11 +48,7 @@ def process(
     if transform is None:
         transform = scipy.fft
 
-    if window is None:
-        window = cosine
-
-    if callable(window):
-        data = data * window(len(data))
+    data = data * window
 
     if padding > 0:
         data = numpy.lib.pad(
@@ -76,7 +71,7 @@ def process(
 
 def iprocess(
     data,
-    window=None,
+    window,
     halved=True,
     transform=None,
     padding=0,
@@ -88,9 +83,8 @@ def iprocess(
     ----------
     data : array_like
         The spectrum to be calculated.
-    window : callable
-        Window to be used for deringing. Can be :code:`False` to disable
-        windowing. Defaults to :code:`scipy.signal.cosine`.
+    window : array_like
+        Tapering window
     halved : boolean
         Switch for turning on signal truncation. For real output signals,
         the inverse fourier transform consumes a symmetrically
@@ -123,13 +117,7 @@ def iprocess(
     if padding > 0:
         output = output[0:-(len(data) * padding / (padding + 1))]
 
-    if window is None:
-        window = cosine
-
-    if callable(window):
-        output = output * window(len(output))
-
-    return scipy.real(output)
+    return scipy.real(output * window)
 
 
 def spectrogram(
@@ -138,6 +126,7 @@ def spectrogram(
     hopsize=None,
     overlap=None,
     centered=True,
+    window=None,
     **kwargs
 ):
     """Calculate the spectrogram of a signal
@@ -162,6 +151,9 @@ def spectrogram(
     centered : boolean
         Pad input signal so that the first and last window are centered around
         the beginning of the signal. Defaults to true.
+    window : callable, array_like
+        Window to be used for deringing. Can be :code:`False` to disable
+        windowing. Defaults to :code:`scipy.signal.cosine`.
 
     Returns
     -------
@@ -201,6 +193,12 @@ def spectrogram(
             constant_values=0
         )
 
+    if window is None:
+        window = cosine
+
+    if callable(window):
+        window = window(framelength)
+
     def traf(data):
         # Pad input signal so it fits into framelength spec
         data = numpy.lib.pad(
@@ -222,8 +220,11 @@ def spectrogram(
         ))
 
         for j, i in values:
-            sig = process(data[i:i + framelength], **kwargs) \
-                / (framelength // hopsize // 2)
+            sig = process(
+                data[i:i + framelength],
+                window,
+                **kwargs
+            ) / (framelength // hopsize // 2)
 
             if(i == 0):
                 output = numpy.zeros(
@@ -256,6 +257,7 @@ def ispectrogram(
     hopsize=None,
     overlap=None,
     centered=True,
+    window=None,
     **kwargs
 ):
     """Calculate the inverse spectrogram of a signal
@@ -280,8 +282,9 @@ def ispectrogram(
     centered : boolean
         Pad input signal so that the first and last window are centered around
         the beginning of the signal. Defaults to :code:`True`.
-    windowed : boolean
-        Switch for turning on signal windowing. Defaults to :code:`True`.
+    window : callable, array_like
+        Window to be used for deringing. Can be :code:`False` to disable
+        windowing. Defaults to :code:`scipy.signal.cosine`.
     halved : boolean
         Switch for turning on signal truncation. By default,
         the fourier transform returns a symmetrically mirrored
@@ -324,11 +327,21 @@ def ispectrogram(
     if hopsize is None:
         hopsize = framelength // overlap
 
+    if window is None:
+        window = cosine
+
+    if callable(window):
+        window = window(framelength)
+
     def traf(data):
         i = 0
         values = range(0, data.shape[1])
         for j in values:
-            sig = iprocess(data[:, j], **kwargs)
+            sig = iprocess(
+                data[:, j],
+                window,
+                **kwargs
+            )
 
             if(i == 0):
                 output = numpy.zeros(
