@@ -139,6 +139,8 @@ def spectrogram(
     data : array_like
         The signal to be transformed. May be a 1D vector for single channel
         or a 2D matrix for multi channel data.
+        In case of a mono signal, the data is must be a 1D vector of length
+        :code:`samples`.
         In case of a multi channel signal, the data must be in the shape of
         :code:`samples x channels`.
     framelength : int
@@ -157,6 +159,8 @@ def spectrogram(
     -------
     data : array_like
         The spectrogram (or tensor of spectograms)
+        In case of a mono signal, the data is formatted as
+        :code:`bins x frames`.
         In case of a multi channel signal, the data is formatted as
         :code:`bins x frames x channels`.
 
@@ -252,6 +256,8 @@ def ispectrogram(
     data : array_like
         The spectrogram to be inverted. May be a 2D matrix for single channel
         or a 3D tensor for multi channel data.
+        In case of a mono signal, the data must be in the shape of
+        :code:`bins x frames`.
         In case of a multi channel signal, the data must be in the shape of
         :code:`bins x frames x channels`.
     framelength : int
@@ -277,7 +283,9 @@ def ispectrogram(
     -------
     data : array_like
         The signal (or matrix of signals).
-        In case of a multi channel signal, the data is formatted as
+        In case of a mono output signal, the data is formatted as a 1D vector
+        of length :code:`samples`.
+        In case of a multi channel output signal, the data is formatted as
         :code:`samples x channels`.
 
     Notes
