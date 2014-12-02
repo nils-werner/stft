@@ -12,9 +12,9 @@ import scipy.interpolate
 def process(
     data,
     window,
-    halved=True,
-    transform=None,
-    padding=0,
+    halved,
+    transform,
+    padding,
     **kwargs
 ):
     """Calculate a windowed transform of a signal
@@ -26,12 +26,11 @@ def process(
     window : array_like
         Tapering window
     halved : boolean
-        Switch for turning on signal truncation. For real signals,
-        the fourier transform of real signals returns a symmetrically mirrored
-        spectrum. This additional data is not needed and can be
-        removed. Defaults to :code:`True`.
+        Switch for turning on signal truncation. For real signals, the fourier
+        transform of real signals returns a symmetrically mirrored spectrum.
+        This additional data is not needed and can be removed.
     transform : callable
-        The transform to be used. Defaults to :code:`scipy.fft`.
+        The transform to be used.
     padding : int
         Zero-pad signal with x times the number of samples.
 
@@ -45,8 +44,8 @@ def process(
     Additional keyword arguments will be passed on to :code:`transform`.
 
     """
-    if transform is None:
-        transform = scipy.fft
+    if halved and transform == scipy.fft:
+        transform = numpy.fft.rfft
 
     data = data * window
 
@@ -63,18 +62,15 @@ def process(
 
     result = transform(data)
 
-    if(halved):
-        result = result[0:result.size // 2 + 1]
-
     return result
 
 
 def iprocess(
     data,
     window,
-    halved=True,
-    transform=None,
-    padding=0,
+    halved,
+    transform,
+    padding,
     **kwargs
 ):
     """Calculate the inverse short time fourier transform of a spectrum
@@ -86,13 +82,12 @@ def iprocess(
     window : array_like
         Tapering window
     halved : boolean
-        Switch for turning on signal truncation. For real output signals,
-        the inverse fourier transform consumes a symmetrically
-        mirrored spectrum. This additional data is not needed
-        and can be removed. Setting this value to :code:`True` will
-        automatically create a mirrored spectrum. Defaults to :code:`True`.
+        Switch for turning on signal truncation. For real output signals, the
+        inverse fourier transform consumes a symmetrically mirrored spectrum.
+        This additional data is not needed and can be removed. Setting this
+        value to :code:`True` will automatically create a mirrored spectrum.
     transform : callable
-        The transform to be used. Defaults to :code:`scipy.ifft`.
+        The transform to be used.
     padding : int
         Signal before FFT transform was padded with x zeros.
 
@@ -106,9 +101,6 @@ def iprocess(
     Additional keyword arguments will be passed on to :code:`transform`.
 
     """
-    if transform is None:
-        transform = scipy.ifft
-
     if halved:
         data = numpy.hstack((data, data[-2:0:-1].conjugate()))
 
@@ -127,6 +119,9 @@ def spectrogram(
     overlap=None,
     centered=True,
     window=None,
+    halved=True,
+    transform=None,
+    padding=0,
     **kwargs
 ):
     """Calculate the spectrogram of a signal
@@ -134,12 +129,11 @@ def spectrogram(
     Parameters
     ----------
     data : array_like
-        The signal to be transformed. May be a 1D vector for single channel
-        or a 2D matrix for multi channel data.
-        In case of a mono signal, the data is must be a 1D vector of length
-        :code:`samples`.
-        In case of a multi channel signal, the data must be in the shape of
-        :code:`samples x channels`.
+        The signal to be transformed. May be a 1D vector for single channel or
+        a 2D matrix for multi channel data. In case of a mono signal, the data
+        is must be a 1D vector of length :code:`samples`. In case of a multi
+        channel signal, the data must be in the shape of :code:`samples x
+        channels`.
     framelength : int
         The signal frame length. Defaults to :code:`1024`.
     hopsize : int
@@ -154,15 +148,23 @@ def spectrogram(
     window : callable, array_like
         Window to be used for deringing. Can be :code:`False` to disable
         windowing. Defaults to :code:`scipy.signal.cosine`.
+    halved : boolean
+        Switch for turning on signal truncation. For real signals, the fourier
+        transform of real signals returns a symmetrically mirrored spectrum.
+        This additional data is not needed and can be removed. Defaults to
+        :code:`True`.
+    transform : callable
+        The transform to be used. Defaults to :code:`scipy.fft`.
+    padding : int
+        Zero-pad signal with x times the number of samples.
 
     Returns
     -------
     data : array_like
-        The spectrogram (or tensor of spectograms)
-        In case of a mono signal, the data is formatted as
-        :code:`bins x frames`.
-        In case of a multi channel signal, the data is formatted as
-        :code:`bins x frames x channels`.
+        The spectrogram (or tensor of spectograms) In case of a mono signal,
+        the data is formatted as :code:`bins x frames`. In case of a multi
+        channel signal, the data is formatted as :code:`bins x frames x
+        channels`.
 
     Notes
     -----
@@ -181,7 +183,14 @@ def spectrogram(
     if hopsize is None:
         hopsize = framelength // overlap
 
+    if halved and numpy.any(numpy.iscomplex(data)):
+        raise ValueError("You cannot treat a complex input signal as real "
+                         "valued. Please set keyword argument halved=False.")
+
     data = numpy.squeeze(data)
+
+    if transform is None:
+        transform = scipy.fft
 
     if centered:
         padtuple = [(0, 0)] * data.ndim
@@ -222,7 +231,10 @@ def spectrogram(
         for j, i in values:
             sig = process(
                 data[i:i + framelength],
-                window,
+                window=window,
+                halved=halved,
+                transform=transform,
+                padding=padding,
                 **kwargs
             ) / (framelength // hopsize // 2)
 
@@ -258,6 +270,9 @@ def ispectrogram(
     overlap=None,
     centered=True,
     window=None,
+    halved=True,
+    transform=None,
+    padding=0,
     **kwargs
 ):
     """Calculate the inverse spectrogram of a signal
@@ -266,11 +281,10 @@ def ispectrogram(
     ----------
     data : array_like
         The spectrogram to be inverted. May be a 2D matrix for single channel
-        or a 3D tensor for multi channel data.
-        In case of a mono signal, the data must be in the shape of
-        :code:`bins x frames`.
-        In case of a multi channel signal, the data must be in the shape of
-        :code:`bins x frames x channels`.
+        or a 3D tensor for multi channel data. In case of a mono signal, the
+        data must be in the shape of :code:`bins x frames`. In case of a multi
+        channel signal, the data must be in the shape of :code:`bins x frames x
+        channels`.
     framelength : int
         The signal frame length. Defaults to :code:`1024`.
     hopsize : int
@@ -286,19 +300,22 @@ def ispectrogram(
         Window to be used for deringing. Can be :code:`False` to disable
         windowing. Defaults to :code:`scipy.signal.cosine`.
     halved : boolean
-        Switch for turning on signal truncation. For real signals,
-        the fourier transform returns a symmetrically mirrored
-        spectrum. This additional data is not needed and can be
-        removed. Defaults to :code:`True`.
+        Switch for turning on signal truncation. For real signals, the fourier
+        transform of real signals returns a symmetrically mirrored spectrum.
+        This additional data is not needed and can be removed. Defaults to
+        :code:`True`.
+    transform : callable
+        The transform to be used. Defaults to :code:`scipy.fft`.
+    padding : int
+        Zero-pad signal with x times the number of samples.
 
     Returns
     -------
     data : array_like
-        The signal (or matrix of signals).
-        In case of a mono output signal, the data is formatted as a 1D vector
-        of length :code:`samples`.
-        In case of a multi channel output signal, the data is formatted as
-        :code:`samples x channels`.
+        The signal (or matrix of signals). In case of a mono output signal, the
+        data is formatted as a 1D vector of length :code:`samples`. In case of
+        a multi channel output signal, the data is formatted as :code:`samples
+        x channels`.
 
     Notes
     -----
@@ -333,13 +350,19 @@ def ispectrogram(
     if callable(window):
         window = window(framelength)
 
+    if transform is None:
+        transform = scipy.ifft
+
     def traf(data):
         i = 0
         values = range(0, data.shape[1])
         for j in values:
             sig = iprocess(
                 data[:, j],
-                window,
+                window=window,
+                halved=halved,
+                transform=transform,
+                padding=padding,
                 **kwargs
             )
 
