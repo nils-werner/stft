@@ -22,11 +22,11 @@ def process(
     Parameters
     ----------
     data : array_like
-        The signal to be calculated.
+        The signal to be calculated. Must be a 1D array.
     window : array_like
         Tapering window
     halved : boolean
-        Switch for turning on signal truncation. By default,
+        Switch for turning on signal truncation. For real signals,
         the fourier transform of real signals returns a symmetrically mirrored
         spectrum. This additional data is not needed and can be
         removed. Defaults to :code:`True`.
@@ -82,7 +82,7 @@ def iprocess(
     Parameters
     ----------
     data : array_like
-        The spectrum to be calculated.
+        The spectrum to be calculated. Must be a 1D array.
     window : array_like
         Tapering window
     halved : boolean
@@ -286,7 +286,7 @@ def ispectrogram(
         Window to be used for deringing. Can be :code:`False` to disable
         windowing. Defaults to :code:`scipy.signal.cosine`.
     halved : boolean
-        Switch for turning on signal truncation. By default,
+        Switch for turning on signal truncation. For real signals,
         the fourier transform returns a symmetrically mirrored
         spectrum. This additional data is not needed and can be
         removed. Defaults to :code:`True`.
