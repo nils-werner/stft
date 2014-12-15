@@ -9,8 +9,8 @@ before_install:
     - sudo apt-get install -qq python-numpy python-scipy python-nose python-matplotlib
     - sudo apt-get install -qq python3-numpy python3-scipy python3-nose
     - sudo apt-get install -qq libatlas-dev libatlas-base-dev liblapack-dev gfortran
+    - pip install -r requirements.txt
     - pip install python-dateutil pytz pytest pytest-cov pytest-pep8
-    - pip install pytz
 install:
     - pip install -e .
 script: 
