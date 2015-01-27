@@ -5,7 +5,7 @@ script:
     - pip install -e .
     - py.test
     - python setup.py build_sphinx
-    - python setup.py sdist --formats gztar
+    - python setup.py egg_info -bdev sdist --formats gztar
 
 deploy:
     bash:
