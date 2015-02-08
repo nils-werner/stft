@@ -24,7 +24,7 @@ result.
 
 .. code:: python
 
-    import skadt
+    import stft
     import scipy.io.wavfile as wav
     
     fs, audio = wav.read('input.wav')
