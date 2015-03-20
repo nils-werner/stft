@@ -30,10 +30,26 @@ if __name__ == "__main__":
             'scipy>=0.9',
         ],
 
+        extras_require={
+            'docs': [
+                'sphinx',
+                'sphinxcontrib-napoleon',
+                'sphinx_rtd_theme',
+                'numpydoc',
+            ],
+            'tests': [
+                'pytest',
+                'pytest-cov',
+                'pytest-pep8',
+                'scikits.samplerate',
+            ],
+        },
+
         tests_require=[
-            'nose>=1.3.0'
+            'pytest',
+            'pytest-cov',
+            'pytest-pep8',
         ],
-        test_suite="nose.collector",
 
         classifiers=[
             'Development Status :: 4 - Beta',
