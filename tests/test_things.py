@@ -1,7 +1,7 @@
+from __future__ import division
 import stft
 import numpy
 import pytest
-import scipy.fftpack
 
 
 @pytest.fixture(params=[1, 2])
@@ -27,6 +27,16 @@ def signal(channels, length):
 @pytest.fixture(params=[512])
 def framelength(request):
     return request.param
+
+
+def test_shape(length, framelength):
+    a = numpy.squeeze(numpy.random.random((length, 1)))
+
+    x = stft.spectrogram(a, framelength=framelength, halved=True)
+    assert x.shape[0] == framelength / 2 + 1
+
+    x_2 = stft.spectrogram(a, framelength=framelength, halved=False)
+    assert x_2.shape[0] == framelength
 
 
 def test_windowlength_errors():

@@ -7,6 +7,7 @@ import scipy
 import numpy
 import math
 import scipy.interpolate
+import scipy.fftpack
 
 
 def process(
@@ -44,11 +45,6 @@ def process(
     Additional keyword arguments will be passed on to :code:`transform`.
 
     """
-    if halved and transform == scipy.fft:
-        transform = numpy.fft.rfft
-
-    if halved:
-        transform = numpy.fft.rfft
 
     data = data * window
 
@@ -64,6 +60,9 @@ def process(
         )
 
     result = transform(data)
+
+    if(halved):
+        result = result[0:result.size // 2 + 1]
 
     return result
 
@@ -93,6 +92,7 @@ def iprocess(
         The transform to be used.
     padding : int
         Signal before FFT transform was padded with x zeros.
+
 
     Returns
     -------
@@ -159,7 +159,7 @@ def spectrogram(
         This additional data is not needed and can be removed. Defaults to
         :code:`True`.
     transform : callable
-        The transform to be used. Defaults to :code:`scipy.fft`.
+        The transform to be used. Defaults to :code:`scipy.fftpack.fft`.
     padding : int
         Zero-pad signal with x times the number of samples.
 
@@ -195,7 +195,7 @@ def spectrogram(
     data = numpy.squeeze(data)
 
     if transform is None:
-        transform = scipy.fft
+        transform = scipy.fftpack.fft
 
     if centered:
         padtuple = [(0, 0)] * data.ndim
@@ -305,12 +305,11 @@ def ispectrogram(
         Window to be used for deringing. Can be :code:`False` to disable
         windowing. Defaults to :code:`scipy.signal.cosine`.
     halved : boolean
-        Switch for turning on signal truncation. For real signals, the fourier
-        transform of real signals returns a symmetrically mirrored spectrum.
-        This additional data is not needed and can be removed. Defaults to
-        :code:`True`.
+        Switch to reconstruct the other halve of the spectrum if the forward
+        transform has been truncated. Defaults to :code:`True` so that it
+        matches the default transforms.
     transform : callable
-        The transform to be used. Defaults to :code:`scipy.fft`.
+        The transform to be used. Defaults to :code:`scipy.fftpack.ifft`.
     padding : int
         Zero-pad signal with x times the number of samples.
 
@@ -356,7 +355,7 @@ def ispectrogram(
         window = window(framelength)
 
     if transform is None:
-        transform = scipy.ifft
+        transform = scipy.fftpack.ifft
 
     def traf(data):
         i = 0
