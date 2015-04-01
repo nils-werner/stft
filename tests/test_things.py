@@ -104,9 +104,9 @@ def raiser(*args):
 def test_fallback(monkeypatch):
     # Try monkeypatching signal.cosine away.
     # Ignore AttributeErrors during monkeypatching, for older scipy versions
+    import scipy.signal
     try:
-        import scipy.signal
         monkeypatch.setattr("scipy.signal.cosine", raiser)
-    except AttributeError:
+    except Exception:
         pass
     return test_windowlength_errors()
