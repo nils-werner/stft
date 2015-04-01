@@ -97,10 +97,11 @@ def test_issue1():
     assert b.ndim == 2
 
 
-def test_fallback():
-    try:
-        import scipy.signal
-        del scipy.signal.cosine
-        return test_windowlength_errors()
-    except AttributeError:
-        pass
+def raiser(*args):
+    raise AttributeError
+
+
+def test_fallback(monkeypatch):
+    import scipy.signal
+    monkeypatch.setattr("scipy.signal.cosine", raiser)
+    return test_windowlength_errors()
