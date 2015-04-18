@@ -8,6 +8,7 @@ import numpy
 import math
 import scipy.interpolate
 import scipy.fftpack
+from .types import SpectrogramArray
 
 
 def process(
@@ -127,6 +128,7 @@ def spectrogram(
     halved=True,
     transform=None,
     padding=0,
+    save_settings=True,
     **kwargs
 ):
     """Calculate the spectrogram of a signal
@@ -162,6 +164,10 @@ def spectrogram(
         The transform to be used. Defaults to :code:`scipy.fftpack.fft`.
     padding : int
         Zero-pad signal with x times the number of samples.
+    save_settings : boolean
+        Save settings used here in attribute :code:`out.stft_settings` so that
+        :func:`ispectrogram` can infer these settings without the developer
+        having to pass them again.
 
     Returns
     -------
@@ -211,7 +217,9 @@ def spectrogram(
         window = cosine
 
     if callable(window):
-        window = window(framelength)
+        window_array = window(framelength)
+    else:
+        window_array = window
 
     def traf(data):
         # Pad input signal so it fits into framelength spec
@@ -236,7 +244,7 @@ def spectrogram(
         for j, i in values:
             sig = process(
                 data[i:i + framelength],
-                window=window,
+                window=window_array,
                 halved=halved,
                 transform=transform,
                 padding=padding,
@@ -252,8 +260,10 @@ def spectrogram(
 
         return output
 
+    if data.ndim > 2:
+        raise ValueError("spectrogram: Only 1D or 2D input data allowed")
     if data.ndim == 1:
-        return traf(data)
+        out = traf(data)
     elif data.ndim == 2:
         for i in range(data.shape[1]):
             tmp = traf(data[:, i])
@@ -263,21 +273,35 @@ def spectrogram(
                     (tmp.shape + (data.shape[1],)), dtype=tmp.dtype
                 )
             out[:, :, i] = tmp
-        return out
-    else:
-        raise ValueError("spectrogram: Only 1D or 2D input data allowed")
+
+    if save_settings:
+        out = SpectrogramArray(
+            out,
+            stft_settings={
+                'framelength': framelength,
+                'hopsize': hopsize,
+                'overlap': overlap,
+                'centered': centered,
+                'window': window,
+                'halved': halved,
+                'transform': transform,
+                'padding': padding,
+            }
+        )
+
+    return out
 
 
 def ispectrogram(
     data,
-    framelength=1024,
+    framelength=None,
     hopsize=None,
     overlap=None,
-    centered=True,
+    centered=None,
     window=None,
-    halved=True,
+    halved=None,
     transform=None,
-    padding=0,
+    padding=None,
     **kwargs
 ):
     """Calculate the inverse spectrogram of a signal
@@ -291,27 +315,27 @@ def ispectrogram(
         channel signal, the data must be in the shape of :code:`bins x frames x
         channels`.
     framelength : int
-        The signal frame length. Defaults to :code:`1024`.
+        The signal frame length. Defaults to infer from data.
     hopsize : int
-        The signal frame hopsize. Defaults to :code:`None`. Setting this
+        The signal frame hopsize. Defaults to infer from data. Setting this
         value will override :code:`overlap`.
     overlap : int
         The signal frame overlap coefficient. Value :code:`x` means
-        :code:`1/x` overlap. Defaults to :code:`2`.
+        :code:`1/x` overlap. Defaults to infer from data.
     centered : boolean
         Pad input signal so that the first and last window are centered around
-        the beginning of the signal. Defaults to :code:`True`.
+        the beginning of the signal. Defaults to to infer from data.
     window : callable, array_like
         Window to be used for deringing. Can be :code:`False` to disable
-        windowing. Defaults to :code:`scipy.signal.cosine`.
+        windowing. Defaults to to infer from data.
     halved : boolean
         Switch to reconstruct the other halve of the spectrum if the forward
-        transform has been truncated. Defaults to :code:`True` so that it
-        matches the default transforms.
+        transform has been truncated. Defaults to to infer from data.
     transform : callable
-        The transform to be used. Defaults to :code:`scipy.fftpack.ifft`.
+        The transform to be used. Defaults to infer from data.
     padding : int
-        Zero-pad signal with x times the number of samples.
+        Zero-pad signal with x times the number of samples. Defaults to infer
+        from data.
 
     Returns
     -------
@@ -323,6 +347,11 @@ def ispectrogram(
 
     Notes
     -----
+    By default :func:`spectrogram` saves its transformation parameters in
+    the output array. This data is used to infer the transform parameters
+    here. Any aspect of the settings can be overridden by passing the according
+    parameter to this function.
+
     Additional keyword arguments will be passed on to :code:`iprocess`.
 
     During transform the data will be padded to be a multiple of the desired
@@ -342,6 +371,29 @@ def ispectrogram(
     stft.stft.iprocess : The function used to transform the data
 
     """
+    try:
+        if framelength is None:
+            framelength = data.stft_settings['framelength']
+        if hopsize is None:
+            hopsize = data.stft_settings['hopsize']
+        if overlap is None:
+            overlap = data.stft_settings['overlap']
+        if centered is None:
+            centered = data.stft_settings['centered']
+        if window is None:
+            window = data.stft_settings['window']
+        if halved is None:
+            halved = data.stft_settings['halved']
+        if padding is None:
+            padding = data.stft_settings['padding']
+    except AttributeError:
+        pass
+    except KeyError:
+        raise ValueError(
+            "stft_settings dict was incomplete, could not"
+            "infer data from array"
+        )
+
     if overlap is None:
         overlap = 2
 
@@ -352,7 +404,9 @@ def ispectrogram(
         window = cosine
 
     if callable(window):
-        window = window(framelength)
+        window_array = window(framelength)
+    else:
+        window_array = window
 
     if transform is None:
         transform = scipy.fftpack.ifft
@@ -363,7 +417,7 @@ def ispectrogram(
         for j in values:
             sig = iprocess(
                 data[:, j],
-                window=window,
+                window=window_array,
                 halved=halved,
                 transform=transform,
                 padding=padding,

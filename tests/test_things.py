@@ -58,10 +58,23 @@ def test_precision(channels, padding, signal, framelength):
     a = signal
 
     x = stft.spectrogram(a, framelength=framelength, padding=padding)
-    y = stft.ispectrogram(x, framelength=framelength, padding=padding)
+    y = stft.ispectrogram(x)
 
-    # Crop first and last frame
     assert numpy.allclose(a, y)
+
+
+def test_overriding(channels, padding, signal, framelength):
+    """
+    Test if overriding transform settings works
+
+    """
+    a = signal
+
+    x = stft.spectrogram(a, framelength=framelength, padding=padding)
+    y = stft.ispectrogram(x, hopsize=framelength)
+
+    # We were using no overlap during inverse, so our output is twice as long
+    assert len(a) == len(y) // 2
 
 
 def test_rms(channels, padding, signal, framelength):
@@ -72,9 +85,8 @@ def test_rms(channels, padding, signal, framelength):
     a = signal
 
     x = stft.spectrogram(a, framelength=framelength, padding=padding)
-    y = stft.ispectrogram(x, framelength=framelength, padding=padding)
+    y = stft.ispectrogram(x)
 
-    # Crop first and last frame
     assert numpy.sqrt(numpy.mean((a - y) ** 2)) < 1e-8
 
 
@@ -86,7 +98,8 @@ def test_maxdim():
 
     b = numpy.random.random((512, 2, 2, 3))
     with pytest.raises(ValueError):
-        stft.ispectrogram(b)
+        # we cannot infer data from a NumPy array, so we set framelengt here
+        stft.ispectrogram(b, framelength=1024)
 
 
 def test_issue1():
