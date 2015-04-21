@@ -34,6 +34,29 @@ result.
 
 .. seealso:: modules :func:`stft.spectrogram` :func:`stft.ispectrogram`
 
+Passing multiple transfer functions
+-----------------------------------
+
+:func:`stft.spectrogram` and :func:`stft.ispectrogram` allow passing multiple
+transform functions as a list.
+
+STFT will pick each transform for each frame it processes, the list of
+transforms will be extended indefinitely for as long as many frames need to
+be processed.
+
+.. code:: python
+
+    import stft
+    import scipy.io.wavfile as wav
+
+    fs, audio = wav.read('input.wav')
+    specgram = stft.spectrogram(audio, transform=[scipy.fftpack.fft, numpy.fft.fft])
+    output = stft.ispectrogram(specgram, transform=[scipy.fftpack.ifft, numpy.fft.ifft])
+    wav.write('output.wav', fs, output)
+
+In this case, each frame will be processed using :code:`scipy.fftpack.fft`,
+then :code:`numpy.fft.fft`, then :code:`scipy.fftpack.fft` again etc.
+
 Saving Settings Example
 -----------------------
 

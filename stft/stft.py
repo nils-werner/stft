@@ -6,6 +6,7 @@ from __future__ import division
 import scipy
 import numpy
 import math
+import itertools
 import scipy.interpolate
 import scipy.fftpack
 from .types import SpectrogramArray
@@ -203,6 +204,11 @@ def spectrogram(
     if transform is None:
         transform = scipy.fftpack.fft
 
+    if not isinstance(transform, (list, tuple)):
+        transform = [transform]
+
+    transforms = itertools.cycle(transform)
+
     if centered:
         padtuple = [(0, 0)] * data.ndim
         padtuple[0] = (framelength // 2, framelength // 2)
@@ -246,7 +252,7 @@ def spectrogram(
                 data[i:i + framelength],
                 window=window_array,
                 halved=halved,
-                transform=transform,
+                transform=next(transforms),
                 padding=padding,
                 **kwargs
             ) / (framelength // hopsize // 2)
@@ -411,6 +417,11 @@ def ispectrogram(
     if transform is None:
         transform = scipy.fftpack.ifft
 
+    if not isinstance(transform, (list, tuple)):
+        transform = [transform]
+
+    transforms = itertools.cycle(transform)
+
     def traf(data):
         i = 0
         values = range(0, data.shape[1])
@@ -419,7 +430,7 @@ def ispectrogram(
                 data[:, j],
                 window=window_array,
                 halved=halved,
-                transform=transform,
+                transform=next(transforms),
                 padding=padding,
                 **kwargs
             )

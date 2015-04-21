@@ -1,5 +1,6 @@
 from __future__ import division
 import stft
+import scipy
 import numpy
 import pytest
 
@@ -75,6 +76,19 @@ def test_overriding(channels, padding, signal, framelength):
 
     # We were using no overlap during inverse, so our output is twice as long
     assert len(a) == len(y) // 2
+
+
+def test_multiple_transforms(signal):
+    """
+    Test if giving multiple different transforms works OK
+
+    """
+    a = signal
+
+    x = stft.spectrogram(a, transform=[scipy.fftpack.fft, numpy.fft.fft])
+    y = stft.ispectrogram(x, transform=[scipy.fftpack.ifft, numpy.fft.ifft])
+
+    assert numpy.allclose(a, y)
 
 
 def test_rms(channels, padding, signal, framelength):
