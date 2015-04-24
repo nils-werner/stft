@@ -18,7 +18,6 @@ def process(
     halved,
     transform,
     padding,
-    **kwargs
 ):
     """Calculate a windowed transform of a signal
 
@@ -41,10 +40,6 @@ def process(
     -------
     data : array_like
         The spectrum
-
-    Notes
-    -----
-    Additional keyword arguments will be passed on to :code:`transform`.
 
     """
 
@@ -75,7 +70,6 @@ def iprocess(
     halved,
     transform,
     padding,
-    **kwargs
 ):
     """Calculate the inverse short time fourier transform of a spectrum
 
@@ -101,17 +95,13 @@ def iprocess(
     data : array_like
         The signal
 
-    Notes
-    -----
-    Additional keyword arguments will be passed on to :code:`transform`.
-
     """
     if halved:
         data = numpy.lib.pad(data, (0, data.shape[0] - 2), 'reflect')
         start = data.shape[0] // 2 + 1
         data[start:] = data[start:].conjugate()
 
-    output = transform(data, **kwargs)
+    output = transform(data)
 
     if padding > 0:
         output = output[0:-(len(data) * padding / (padding + 1))]
@@ -130,7 +120,6 @@ def spectrogram(
     transform=None,
     padding=0,
     save_settings=True,
-    **kwargs
 ):
     """Calculate the spectrogram of a signal
 
@@ -180,8 +169,6 @@ def spectrogram(
 
     Notes
     -----
-    Additional keyword arguments will be passed on to :code:`process`.
-
     The data will be padded to be a multiple of the desired FFT length.
 
     See Also
@@ -254,7 +241,6 @@ def spectrogram(
                 halved=halved,
                 transform=next(transforms),
                 padding=padding,
-                **kwargs
             ) / (framelength // hopsize // 2)
 
             if(i == 0):
@@ -308,7 +294,6 @@ def ispectrogram(
     halved=None,
     transform=None,
     padding=None,
-    **kwargs
 ):
     """Calculate the inverse spectrogram of a signal
 
@@ -357,8 +342,6 @@ def ispectrogram(
     the output array. This data is used to infer the transform parameters
     here. Any aspect of the settings can be overridden by passing the according
     parameter to this function.
-
-    Additional keyword arguments will be passed on to :code:`iprocess`.
 
     During transform the data will be padded to be a multiple of the desired
     FFT length. Hence, the result of the inverse transform might be longer
@@ -432,7 +415,6 @@ def ispectrogram(
                 halved=halved,
                 transform=next(transforms),
                 padding=padding,
-                **kwargs
             )
 
             if(i == 0):
