@@ -376,7 +376,14 @@ def ispectrogram(
         if padding is None:
             padding = data.stft_settings['padding']
     except AttributeError:
-        pass
+        if framelength is None:
+            framelength = 1024
+        if centered is None:
+            centered = True
+        if halved is None:
+            halved = True
+        if padding is None:
+            padding = 0
     except KeyError:
         raise ValueError(
             "stft_settings dict was incomplete, could not"
