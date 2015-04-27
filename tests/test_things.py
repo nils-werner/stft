@@ -5,36 +5,6 @@ import numpy
 import pytest
 
 
-@pytest.fixture(params=[1, 2, 4])
-def channels(request):
-    return request.param
-
-
-@pytest.fixture(params=[0, 1, 4])
-def padding(request):
-    return request.param
-
-
-@pytest.fixture(params=[2, 4, 5])
-def length(request):
-    return request.param * 1024
-
-
-@pytest.fixture(params=[stft.stft.cosine, 1])
-def window(request):
-    return request.param
-
-
-@pytest.fixture
-def signal(channels, length):
-    return numpy.squeeze(numpy.random.random((length, channels)))
-
-
-@pytest.fixture(params=[1, 2, 4])
-def framelength(request):
-    return request.param * 512
-
-
 def test_shape(length, framelength):
     a = numpy.squeeze(numpy.random.random((length, 1)))
 
@@ -64,14 +34,16 @@ def test_windowlength_errors():
     stft.spectrogram(numpy.random.random(siglen), framelength=framelen)
 
 
-def test_precision(channels, padding, signal, framelength):
+def test_precision(channels, padding, signal, framelength, halved):
     """
     Test if transform-inverse identity holds
 
     """
     a = signal
 
-    x = stft.spectrogram(a, framelength=framelength, padding=padding)
+    x = stft.spectrogram(
+        a, framelength=framelength, padding=padding, halved=halved
+    )
     y = stft.ispectrogram(x)
 
     assert numpy.allclose(a, y)
@@ -85,10 +57,10 @@ def test_overriding(channels, padding, signal, framelength):
     a = signal
 
     x = stft.spectrogram(a, framelength=framelength, padding=padding)
-    y = stft.ispectrogram(x, hopsize=framelength)
+    y = stft.ispectrogram(x, framelength=framelength)
 
     # We were using no overlap during inverse, so our output is twice as long
-    assert len(a) == len(y) // 2
+    assert numpy.allclose(a, y)
 
 
 def test_multiple_transforms(signal):
@@ -104,14 +76,16 @@ def test_multiple_transforms(signal):
     assert numpy.allclose(a, y)
 
 
-def test_rms(channels, padding, signal, framelength):
+def test_rms(channels, padding, signal, framelength, halved):
     """
     Test if transform-inverse identity holds
 
     """
     a = signal
 
-    x = stft.spectrogram(a, framelength=framelength, padding=padding)
+    x = stft.spectrogram(
+        a, framelength=framelength, padding=padding, halved=halved
+    )
     y = stft.ispectrogram(x)
 
     assert numpy.sqrt(numpy.mean((a - y) ** 2)) < 1e-8

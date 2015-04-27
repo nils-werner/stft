@@ -10,6 +10,7 @@ import itertools
 import scipy.interpolate
 import scipy.fftpack
 from .types import SpectrogramArray
+from . import utils
 
 
 def process(
@@ -176,6 +177,8 @@ def spectrogram(
     stft.stft.process : The function used to transform the data
 
     """
+    outlength = len(data)
+
     if overlap is None:
         overlap = 2
 
@@ -197,14 +200,7 @@ def spectrogram(
     transforms = itertools.cycle(transform)
 
     if centered:
-        padtuple = [(0, 0)] * data.ndim
-        padtuple[0] = (framelength // 2, framelength // 2)
-        data = numpy.lib.pad(
-            data,
-            pad_width=padtuple,
-            mode='constant',
-            constant_values=0
-        )
+        data = utils.center_pad(data, framelength)
 
     if window is None:
         window = cosine
@@ -216,19 +212,7 @@ def spectrogram(
 
     def traf(data):
         # Pad input signal so it fits into framelength spec
-        data = numpy.lib.pad(
-            data,
-            pad_width=(
-                0,
-                int(
-                    math.ceil(
-                        len(data) / framelength
-                    ) * framelength - len(data)
-                )
-            ),
-            mode='constant',
-            constant_values=0
-        )
+        data = utils.pad(data, framelength)
 
         values = list(enumerate(
             range(0, len(data) - framelength + hopsize, hopsize)
@@ -278,6 +262,7 @@ def spectrogram(
                 'halved': halved,
                 'transform': transform,
                 'padding': padding,
+                'outlength': outlength,
             }
         )
 
@@ -294,6 +279,7 @@ def ispectrogram(
     halved=None,
     transform=None,
     padding=None,
+    outlength=None,
 ):
     """Calculate the inverse spectrogram of a signal
 
@@ -327,6 +313,11 @@ def ispectrogram(
     padding : int
         Zero-pad signal with x times the number of samples. Defaults to infer
         from data.
+    outlength : int
+        Crop output signal to length. Useful when input length of spectrogram
+        did not fit into framelength and input data had to be padded. Not
+        setting this value will disable cropping, the output data may be
+        longer than expected.
 
     Returns
     -------
@@ -375,6 +366,8 @@ def ispectrogram(
             halved = data.stft_settings['halved']
         if padding is None:
             padding = data.stft_settings['padding']
+        if outlength is None:
+            outlength = data.stft_settings['outlength']
     except AttributeError:
         if framelength is None:
             framelength = 1024
@@ -451,11 +444,9 @@ def ispectrogram(
         raise ValueError("ispectrogram: Only 2D or 3D input data allowed")
 
     if centered:
-        slicetuple = [slice(None)] * out.ndim
-        slicetuple[0] = slice(framelength // 2, -framelength // 2)
-        return out[slicetuple]
-    else:
-        return out
+        out = utils.center_unpad(out, framelength)
+
+    return utils.unpad(out, outlength)
 
 
 def cosine(M):
