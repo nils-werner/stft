@@ -5,7 +5,7 @@ import numpy
 import pytest
 
 
-@pytest.fixture(params=[1, 2])
+@pytest.fixture(params=[1, 2, 4])
 def channels(request):
     return request.param
 
@@ -15,8 +15,13 @@ def padding(request):
     return request.param
 
 
-@pytest.fixture(params=[2048])
+@pytest.fixture(params=[2048, 4096])
 def length(request):
+    return request.param
+
+
+@pytest.fixture(params=[stft.stft.cosine, 1])
+def window(request):
     return request.param
 
 
@@ -25,7 +30,7 @@ def signal(channels, length):
     return numpy.squeeze(numpy.random.random((length, channels)))
 
 
-@pytest.fixture(params=[512])
+@pytest.fixture(params=[1024, 512])
 def framelength(request):
     return request.param
 
@@ -38,6 +43,14 @@ def test_shape(length, framelength):
 
     x_2 = stft.spectrogram(a, framelength=framelength, halved=False)
     assert x_2.shape[0] == framelength
+
+
+def test_window_types(signal, framelength, window):
+    """
+    Test if callable and fixed value windows work
+
+    """
+    stft.spectrogram(signal, framelength=framelength, window=window)
 
 
 def test_windowlength_errors():
@@ -105,6 +118,11 @@ def test_rms(channels, padding, signal, framelength):
 
 
 def test_maxdim():
+    """
+    Test if breaking elementary limitations (2D signal, 3D spectrogram at most)
+    are caught appropriately
+
+    """
     a = numpy.random.random((512, 2, 2))
 
     with pytest.raises(ValueError):
@@ -117,6 +135,11 @@ def test_maxdim():
 
 
 def test_issue1():
+    """
+    Passing a (x, 1) shape signal created a 3D tensor output, while
+    a (x,) shape signal created a 2D matrix. This should not happen.
+
+    """
     a = numpy.random.random((512, 1))
 
     b = stft.spectrogram(a)
@@ -124,23 +147,21 @@ def test_issue1():
     assert b.ndim == 2
 
 
-def test_issue_autoinverse_values(signal):
-    #
-    # Passing values to inverse on a plain array failed as the values were
-    # not actually used
-    #
-    framelength = 1024
+def test_issue_autoinverse_values(signal, framelength):
+    """
+    Passing values to inverse on a plain array failed as the values were
+    not actually used
 
+    """
     x = numpy.array(stft.spectrogram(signal, framelength=framelength))
     y = stft.ispectrogram(x, framelength=framelength)
 
 
 def test_issue_autoinverse_defaults(signal):
-    #
-    # Using defaults in inverse did not work because there were none in place
-    #
-    framelength = 1024
+    """
+    Using defaults in inverse did not work because there were none in place
 
+    """
     x = numpy.array(stft.spectrogram(signal))
     y = stft.ispectrogram(x)
 
@@ -150,8 +171,11 @@ def raiser(*args):
 
 
 def test_fallback(monkeypatch):
-    # Try monkeypatching signal.cosine away.
-    # Ignore AttributeErrors during monkeypatching, for older scipy versions
+    """
+    Try monkeypatching signal.cosine away so we can test stft.stft.cosine.
+    Ignore AttributeErrors during monkeypatching, for older scipy versions
+
+    """
     import scipy.signal
     try:
         monkeypatch.setattr("scipy.signal.cosine", raiser)
