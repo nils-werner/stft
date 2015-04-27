@@ -15,9 +15,9 @@ def padding(request):
     return request.param
 
 
-@pytest.fixture(params=[2048, 4096])
+@pytest.fixture(params=[2, 4, 5])
 def length(request):
-    return request.param
+    return request.param * 1024
 
 
 @pytest.fixture(params=[stft.stft.cosine, 1])
@@ -30,9 +30,9 @@ def signal(channels, length):
     return numpy.squeeze(numpy.random.random((length, channels)))
 
 
-@pytest.fixture(params=[1024, 512])
+@pytest.fixture(params=[1, 2, 4])
 def framelength(request):
-    return request.param
+    return request.param * 512
 
 
 def test_shape(length, framelength):
