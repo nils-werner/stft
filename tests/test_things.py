@@ -124,6 +124,27 @@ def test_issue1():
     assert b.ndim == 2
 
 
+def test_issue_autoinverse_values(signal):
+    #
+    # Passing values to inverse on a plain array failed as the values were
+    # not actually used
+    #
+    framelength = 1024
+
+    x = numpy.array(stft.spectrogram(signal, framelength=framelength))
+    y = stft.ispectrogram(x, framelength=framelength)
+
+
+def test_issue_autoinverse_defaults(signal):
+    #
+    # Using defaults in inverse did not work because there were none in place
+    #
+    framelength = 1024
+
+    x = numpy.array(stft.spectrogram(signal))
+    y = stft.ispectrogram(x)
+
+
 def raiser(*args):
     raise AttributeError
 
