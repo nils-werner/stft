@@ -2,7 +2,7 @@
 Module to transform signals
 
 """
-from __future__ import division
+from __future__ import division, absolute_import
 import scipy
 import numpy
 import math
