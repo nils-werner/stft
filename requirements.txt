@@ -1,5 +1,8 @@
 # This is only needed for Read The Docs
-
+pip >= 8.0.0
+wheel
+numpy>=1.6
+scipy>=0.9
 sphinx
 sphinxcontrib-napoleon
 sphinx_rtd_theme
