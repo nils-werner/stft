@@ -5,7 +5,6 @@ Module to transform signals
 from __future__ import division, absolute_import
 import scipy
 import numpy
-import math
 import itertools
 import scipy.interpolate
 import scipy.fftpack
