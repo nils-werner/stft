@@ -78,7 +78,7 @@ def test_multiple_transforms(signal):
 
 def test_real(signal):
     """
-    Test if giving multiple different transforms works OK
+    Test if real valued input results in real valued output
 
     """
     a = signal
