@@ -106,7 +106,7 @@ def iprocess(
     if padding > 0:
         output = output[0:-(len(data) * padding / (padding + 1))]
 
-    return scipy.real(output * window)
+    return output * window
 
 
 def spectrogram(
