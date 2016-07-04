@@ -397,7 +397,11 @@ def ispectrogram(
         window_array = window
 
     if transform is None:
-        transform = scipy.fftpack.ifft
+        # add function that casts ifft output to real
+        def ifft_real(*args, **kwargs):
+            return numpy.real(scipy.fftpack.ifft(*args, **kwargs))
+
+        transform = ifft_real
 
     if not isinstance(transform, (list, tuple)):
         transform = [transform]

@@ -76,6 +76,19 @@ def test_multiple_transforms(signal):
     assert numpy.allclose(a, y)
 
 
+def test_real(signal):
+    """
+    Test if giving multiple different transforms works OK
+
+    """
+    a = signal
+
+    x = stft.spectrogram(a)
+    y = stft.ispectrogram(x)
+
+    assert y.dtype == numpy.float64
+
+
 def test_complex(signal):
     """
     Test transform-inverse works for complex input
@@ -86,7 +99,7 @@ def test_complex(signal):
     # create complex test vectors by adding random phase
     c = a + 1j*numpy.random.random(a.shape)
     x = stft.spectrogram(c, halved=False)
-    y = stft.ispectrogram(x, halved=False)
+    y = stft.ispectrogram(x, halved=False, transform=scipy.fftpack.ifft)
 
     assert c.dtype == y.dtype
     assert numpy.allclose(c, y)
