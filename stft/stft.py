@@ -398,10 +398,13 @@ def ispectrogram(
 
     if transform is None:
         # add function that casts ifft output to real
-        def ifft_real(*args, **kwargs):
-            return numpy.real(scipy.fftpack.ifft(*args, **kwargs))
+        def ifft(*args, **kwargs):
+            if halved:
+                return numpy.real(scipy.fftpack.ifft(*args, **kwargs))
+            else:
+                return scipy.fftpack.ifft(*args, **kwargs)
 
-        transform = ifft_real
+        transform = ifft
 
     if not isinstance(transform, (list, tuple)):
         transform = [transform]

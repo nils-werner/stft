@@ -99,7 +99,7 @@ def test_complex(signal):
     # create complex test vectors by adding random phase
     c = a + 1j*numpy.random.random(a.shape)
     x = stft.spectrogram(c, halved=False)
-    y = stft.ispectrogram(x, halved=False, transform=scipy.fftpack.ifft)
+    y = stft.ispectrogram(x, halved=False)
 
     assert c.dtype == y.dtype
     assert numpy.allclose(c, y)
