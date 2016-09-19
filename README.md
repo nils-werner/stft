@@ -1,7 +1,7 @@
 STFT
 ====
 
-[![Build Status](https://travis-ci.org/audiolabs/stft.svg?branch=master)](https://travis-ci.org/audiolabs/stft)
+[![Build Status](https://travis-ci.org/nils-werner/stft.svg?branch=master)](https://travis-ci.org/nils-werner/stft)
 [![Docs Status](https://readthedocs.org/projects/stft/badge/?version=latest)](https://stft.readthedocs.org/en/latest/)
 
 This is a package for calculating the short time fourier transform (spectrogram) or any

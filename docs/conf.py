@@ -28,7 +28,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 project = 'stft'
-copyright = '2014, International AudioLabs Erlangen'
+copyright = '2014, Nils Werner'
 
 version = '0.4.7'
 release = version
@@ -47,17 +47,17 @@ latex_elements = {
 
 latex_documents = [
     ('index', 'stft.tex', 'stft Documentation',
-     'International AudioLabs Erlangen', 'manual'),
+     'Nils Werner', 'manual'),
 ]
 
 man_pages = [
     ('index', 'stft', 'stft Documentation',
-     ['International AudioLabs Erlangen'], 1)
+     ['Nils Werner'], 1)
 ]
 
 texinfo_documents = [
     ('index', 'stft', 'stft Documentation',
-     'International AudioLabs Erlangen', 'stft',
+     'Nils Werner', 'stft',
      'One line description of project.',
      'Miscellaneous'),
 ]
