@@ -5,7 +5,6 @@ Module to transform signals
 from __future__ import division, absolute_import
 import scipy
 import numpy
-import math
 import itertools
 import scipy.interpolate
 import scipy.fftpack
@@ -107,7 +106,7 @@ def iprocess(
     if padding > 0:
         output = output[0:-(len(data) * padding / (padding + 1))]
 
-    return scipy.real(output * window)
+    return output * window
 
 
 def spectrogram(
@@ -398,7 +397,14 @@ def ispectrogram(
         window_array = window
 
     if transform is None:
-        transform = scipy.fftpack.ifft
+        # add function that casts ifft output to real
+        def ifft(*args, **kwargs):
+            if halved:
+                return numpy.real(scipy.fftpack.ifft(*args, **kwargs))
+            else:
+                return scipy.fftpack.ifft(*args, **kwargs)
+
+        transform = ifft
 
     if not isinstance(transform, (list, tuple)):
         transform = [transform]
