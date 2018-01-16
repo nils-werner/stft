@@ -212,7 +212,7 @@ def spectrogram(
 
     def traf(data):
         # Pad input signal so it fits into framelength spec
-        data = utils.pad(data, framelength)
+        data = utils.pad(data, framelength, hopsize)
 
         values = list(enumerate(
             range(0, len(data) - framelength + hopsize, hopsize)
