@@ -22,7 +22,7 @@ def pad(data, framelength):
 def unpad(data, outlength):
     slicetuple = [slice(None)] * data.ndim
     slicetuple[0] = slice(None, outlength)
-    return data[slicetuple]
+    return data[tuple(slicetuple)]
 
 
 def center_pad(data, framelength):
@@ -50,4 +50,4 @@ def center_unpad(data, framelength):
 def center_unpad(data, framelength):
     slicetuple = [slice(None)] * data.ndim
     slicetuple[0] = slice(framelength // 2, -framelength // 2)
-    return data[slicetuple]
+    return data[tuple(slicetuple)]
