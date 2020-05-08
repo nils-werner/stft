@@ -37,17 +37,6 @@ def center_pad(data, framelength):
 
 
 def center_unpad(data, framelength):
-    padtuple = [(0, 0)] * data.ndim
-    padtuple[0] = (framelength // 2, framelength // 2)
-    return numpy.lib.pad(
-        data,
-        pad_width=padtuple,
-        mode='constant',
-        constant_values=0
-    )
-
-
-def center_unpad(data, framelength):
     slicetuple = [slice(None)] * data.ndim
     slicetuple[0] = slice(framelength // 2, -framelength // 2)
     return data[tuple(slicetuple)]
