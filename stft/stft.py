@@ -8,7 +8,7 @@ import numpy
 import math
 import itertools
 import scipy.interpolate
-import scipy.fftpack
+import scipy.fft
 from .types import SpectrogramArray
 from . import utils
 
@@ -152,7 +152,7 @@ def spectrogram(
         This additional data is not needed and can be removed. Defaults to
         :code:`True`.
     transform : callable
-        The transform to be used. Defaults to :code:`scipy.fftpack.fft`.
+        The transform to be used. Defaults to :code:`scipy.fft.fft`.
     padding : int
         Zero-pad signal with x times the number of samples.
     save_settings : boolean
@@ -192,7 +192,7 @@ def spectrogram(
     data = numpy.squeeze(data)
 
     if transform is None:
-        transform = scipy.fftpack.fft
+        transform = scipy.fft.fft
 
     if not isinstance(transform, (list, tuple)):
         transform = [transform]
@@ -398,7 +398,7 @@ def ispectrogram(
         window_array = window
 
     if transform is None:
-        transform = scipy.fftpack.ifft
+        transform = scipy.fft.ifft
 
     if not isinstance(transform, (list, tuple)):
         transform = [transform]

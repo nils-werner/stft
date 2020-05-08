@@ -70,8 +70,8 @@ def test_multiple_transforms(signal):
     """
     a = signal
 
-    x = stft.spectrogram(a, transform=[scipy.fftpack.fft, numpy.fft.fft])
-    y = stft.ispectrogram(x, transform=[scipy.fftpack.ifft, numpy.fft.ifft])
+    x = stft.spectrogram(a, transform=[scipy.fft.fft, numpy.fft.fft])
+    y = stft.ispectrogram(x, transform=[scipy.fft.ifft, numpy.fft.ifft])
 
     assert numpy.allclose(a, y)
 

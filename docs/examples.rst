@@ -50,12 +50,12 @@ be processed.
     import scipy.io.wavfile as wav
 
     fs, audio = wav.read('input.wav')
-    specgram = stft.spectrogram(audio, transform=[scipy.fftpack.fft, numpy.fft.fft])
-    output = stft.ispectrogram(specgram, transform=[scipy.fftpack.ifft, numpy.fft.ifft])
+    specgram = stft.spectrogram(audio, transform=[scipy.fft.fft, numpy.fft.fft])
+    output = stft.ispectrogram(specgram, transform=[scipy.fft.ifft, numpy.fft.ifft])
     wav.write('output.wav', fs, output)
 
-In this case, each frame will be processed using :code:`scipy.fftpack.fft`,
-then :code:`numpy.fft.fft`, then :code:`scipy.fftpack.fft` again etc.
+In this case, each frame will be processed using :code:`scipy.fft.fft`,
+then :code:`numpy.fft.fft`, then :code:`scipy.fft.fft` again etc.
 
 Saving Settings Example
 -----------------------
