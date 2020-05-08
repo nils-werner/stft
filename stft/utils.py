@@ -3,16 +3,16 @@ import numpy
 import math
 
 
-def pad(data, framelength):
+def pad(data, framelength, hopsize):
     return numpy.lib.pad(
         data,
         pad_width=(
             0,
             int(
                 math.ceil(
-                    len(data) / framelength
-                ) * framelength - len(data)
-            )
+                    len(data) / hopsize
+                ) * hopsize + framelength - len(data)
+            ) if (len(data) % hopsize != 0) else 0
         ),
         mode='constant',
         constant_values=0
