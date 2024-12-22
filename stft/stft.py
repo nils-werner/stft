@@ -47,7 +47,7 @@ def process(
     data = data * window
 
     if padding > 0:
-        data = numpy.lib.pad(
+        data = numpy.pad(
             data,
             pad_width=(
                 0,
@@ -59,7 +59,7 @@ def process(
 
     result = transform(data)
 
-    if(halved):
+    if halved:
         result = result[0:result.size // 2 + 1]
 
     return result
@@ -98,7 +98,7 @@ def iprocess(
 
     """
     if halved:
-        data = numpy.lib.pad(data, (0, data.shape[0] - 2), 'reflect')
+        data = numpy.pad(data, (0, data.shape[0] - 2), 'reflect')
         start = data.shape[0] // 2 + 1
         data[start:] = data[start:].conjugate()
 
@@ -227,7 +227,7 @@ def spectrogram(
                 padding=padding,
             ) / (framelength // hopsize // 2)
 
-            if(i == 0):
+            if i == 0:
                 output = numpy.zeros(
                     (sig.shape[0], len(values)), dtype=sig.dtype
                 )
@@ -417,7 +417,7 @@ def ispectrogram(
                 padding=padding,
             )
 
-            if(i == 0):
+            if i == 0:
                 output = numpy.zeros(
                     framelength + (len(values) - 1) * hopsize,
                     dtype=sig.dtype

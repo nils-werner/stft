@@ -4,7 +4,7 @@ import math
 
 
 def pad(data, framelength):
-    return numpy.lib.pad(
+    return numpy.pad(
         data,
         pad_width=(
             0,
@@ -28,7 +28,7 @@ def unpad(data, outlength):
 def center_pad(data, framelength):
     padtuple = [(0, 0)] * data.ndim
     padtuple[0] = (framelength // 2, framelength // 2)
-    return numpy.lib.pad(
+    return numpy.pad(
         data,
         pad_width=padtuple,
         mode='constant',

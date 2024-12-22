@@ -26,7 +26,7 @@ if __name__ == "__main__":
         # Dependencies, this installs the entire Python scientific
         # computations stack
         install_requires=[
-            'numpy>=1.6',
+            'numpy>=1.7',
             'scipy>=0.9',
         ],
 
